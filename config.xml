@@ -10,6 +10,7 @@
     <allow-intent href="https://*/*" />
 
     <platform name="android">
+        <preference name="AndroidXEnabled" value="true" />
         <preference name="Orientation" value="portrait" />
         
         <config-file target="AndroidManifest.xml" parent="/*">

@@ -16,14 +16,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Cordova
-        run: npm install -g cordova
+      - name: Install Cordova & Jetifier
+        run: |
+          npm install -g cordova
+          npm install -g jetifier
 
       - name: Build APK
         run: |
           cordova platform add android@13.0.0
           find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
-          sed -i 's/<manifest/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' platforms/android/app/src/main/AndroidManifest.xml          
+          npx jetifier
+          echo "android.useAndroidX=true" >> platforms/android/gradle.properties
+          echo "android.enableJetifier=true" >> platforms/android/gradle.properties
           cordova build android --debug
 
       - name: Upload APK
