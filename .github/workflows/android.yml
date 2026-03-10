@@ -25,7 +25,7 @@ jobs:
         run: |
           cordova platform add android@13.0.0
           find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
-          npx jetifier
+          npx jetifier -p platforms/android
           echo "android.useAndroidX=true" >> platforms/android/gradle.properties
           echo "android.enableJetifier=true" >> platforms/android/gradle.properties
           cordova build android --debug
