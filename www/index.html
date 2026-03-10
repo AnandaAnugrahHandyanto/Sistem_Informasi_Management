@@ -3,52 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JadwalMHS iOS Style</title>
+    <title>JadwalMHS</title>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --ios-blue: #007AFF; --ios-bg: #F2F2F7; --ios-card: #FFFFFF; }
+        :root { --ios-blue: #007AFF; --ios-bg: #F2F2F7; --ios-card: #FFFFFF; --text: #1C1C1E; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; background: var(--ios-bg); color: #000; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex; justify-content: center; padding: 20px;
-        }
-        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; }
+        body { margin: 0; background: var(--ios-bg); color: var(--text); font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
         
-        .card { 
-            background: var(--ios-card); border-radius: 20px; padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 0.5px solid rgba(0,0,0,0.05);
-            display: none; animation: slideUp 0.4s ease-out;
-        }
+        .card { background: var(--ios-card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 0.5px solid rgba(0,0,0,0.1); display: none; animation: slideUp 0.3s ease-out; }
         .card.active { display: block; }
+        h2 { font-weight: 700; font-size: 26px; margin: 0 0 20px 0; letter-spacing: -0.5px; }
 
-        h2 { font-weight: 700; font-size: 24px; margin-bottom: 20px; letter-spacing: -0.5px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .btn { border-radius: 14px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; }
+        .btn:active { transform: scale(0.95); opacity: 0.8; }
+        .btn-main { background: var(--ios-card); color: var(--ios-blue); height: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 0.5px solid rgba(0,0,0,0.05); }
+        .btn-action { width: 100%; padding: 16px; background: var(--ios-blue); color: white; margin-top: 15px; }
+        .btn-logout { background: #FF3B30; color: white; margin-top: 30px; padding: 12px; }
 
-        input, select {
-            width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
-            border: 1px solid #E5E5EA; background: #FAFAFA; font-size: 16px; outline: none;
-        }
+        input, select { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #C6C6C8; background: #FFF; font-size: 16px; outline: none; }
+        .list-item { background: #F9F9F9; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--ios-blue); }
+        .profile-box { text-align: center; padding: 20px; background: #F2F2F7; border-radius: 15px; margin-bottom: 15px; }
 
-        .btn {
-            width: 100%; padding: 16px; border-radius: 14px; border: none;
-            font-size: 17px; font-weight: 600; cursor: pointer; transition: transform 0.1s;
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: var(--ios-blue); color: white; }
-        .btn-secondary { background: #E5E5EA; color: #000; margin-top: 10px; }
-
-        .list-item {
-            background: #FFF; padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        #toast {
-            position: fixed; bottom: 40px; background: rgba(0,0,0,0.8); color: #fff;
-            padding: 12px 25px; border-radius: 25px; display: none; z-index: 999;
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        #toast { position: fixed; top: 30px; background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; display: none; z-index: 1000; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -57,38 +36,58 @@
 
 <div class="app-container">
     <div id="loginPage" class="card active">
-        <h2>Login Mahasiswa</h2>
-        <input type="email" id="logEmail" placeholder="Email UNPAM">
-        <input type="password" id="logPass" placeholder="Password (8 char + Kapital)">
-        <button class="btn btn-primary" onclick="vibrateBtn(); prosesLogin()">Lanjut</button>
+        <h2>Login</h2>
+        <input type="email" id="logEmail" placeholder="Email Mahasiswa">
+        <input type="password" id="logPass" placeholder="Password (8 Char + Kapital)">
+        <button class="btn btn-action" onclick="vibrateBtn(); prosesLogin()">Masuk</button>
     </div>
 
     <div id="dashboardPage" class="card">
-        <h2>Halo, Ananda!</h2>
-        <button class="btn btn-secondary" onclick="vibrateBtn(); nav('rekapPage')">📅 Semua Jadwal</button>
-        <button class="btn btn-secondary" onclick="vibrateBtn(); nav('agendaPage')">⏱ Hari Ini</button>
-        <button class="btn btn-primary" style="margin-top:40px" onclick="vibrateBtn(); nav('loginPage')">Logout</button>
+        <h2>DASHBOARD</h2>
+        <div class="menu-grid">
+            <button class="btn btn-main" onclick="vibrateBtn(); nav('rekapPage')"><span>📅</span>Jadwal Kuliah</button>
+            <button class="btn btn-main" onclick="vibrateBtn(); nav('rekapPage')"><span>📊</span>Rekap Jadwal</button>
+            <button class="btn btn-main" onclick="vibrateBtn(); nav('agendaPage')"><span>⏱</span>Agenda Harian</button>
+            <button class="btn btn-main" onclick="vibrateBtn(); nav('profilePage')"><span>👤</span>Profil</button>
+        </div>
+        <button class="btn btn-logout btn" onclick="vibrateBtn(); nav('loginPage')">Keluar Aplikasi</button>
     </div>
 
     <div id="rekapPage" class="card">
         <h2>Rekap Jadwal</h2>
-        <div id="rekapList"></div>
-        <button class="btn btn-primary" onclick="vibrateBtn(); nav('inputPage')">+ Jadwal Baru</button>
-        <button class="btn btn-secondary" onclick="vibrateBtn(); nav('dashboardPage')">Kembali</button>
+        <div id="rekapList" style="min-height: 200px;"></div>
+        <button class="btn btn-action" onclick="vibrateBtn(); nav('inputPage')">+ Tambah Jadwal</button>
+        <button class="btn btn-action" style="background:#8E8E93" onclick="vibrateBtn(); nav('dashboardPage')">Kembali</button>
+    </div>
+
+    <div id="agendaPage" class="card">
+        <h2>Agenda Harian</h2>
+        <div id="agendaList"></div>
+        <button class="btn btn-action" style="background:#8E8E93" onclick="vibrateBtn(); nav('dashboardPage')">Kembali</button>
     </div>
 
     <div id="inputPage" class="card">
         <h2>Input Jadwal</h2>
-        <input type="text" id="m" placeholder="Mata Kuliah">
+        <input type="text" id="m" placeholder="Nama Mata Kuliah">
         <select id="h">
             <option value="Senin">Senin</option><option value="Selasa">Selasa</option>
             <option value="Rabu">Rabu</option><option value="Kamis">Kamis</option>
             <option value="Jumat">Jumat</option>
         </select>
         <input type="time" id="j">
-        <input type="text" id="r" placeholder="Gedung/Ruangan">
-        <button class="btn btn-primary" onclick="vibrateBtn(); simpanData()">Simpan</button>
-        <button class="btn btn-secondary" onclick="vibrateBtn(); nav('rekapPage')">Batal</button>
+        <input type="text" id="r" placeholder="Ruang Kelas (Contoh: V.401)">
+        <button class="btn btn-action" onclick="vibrateBtn(); simpanData()">Simpan Jadwal</button>
+    </div>
+
+    <div id="profilePage" class="card">
+        <h2>Profil Mahasiswa</h2>
+        <div class="profile-box">
+            <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
+            <p><strong>Nama:</strong> Ananda Anugrah</p>
+            <p><strong>Status:</strong> Mahasiswa Aktif</p>
+            <p><strong>Prodi:</strong> Teknik Informatika</p>
+        </div>
+        <button class="btn btn-action" style="background:#8E8E93" onclick="vibrateBtn(); nav('dashboardPage')">Kembali</button>
     </div>
 </div>
 
@@ -98,15 +97,11 @@
 
     document.addEventListener("deviceready", () => {
         if (window.cordova && cordova.plugins.notification) {
-            cordova.plugins.notification.local.requestPermission((granted) => {
-                if(!granted) alert("Nyalakan notifikasi di setting agar pengingat jalan!");
-            });
+            cordova.plugins.notification.local.requestPermission();
         }
     }, false);
 
-    function vibrateBtn() {
-        if (navigator.vibrate) navigator.vibrate(50);
-    }
+    function vibrateBtn() { if (navigator.vibrate) navigator.vibrate(40); }
 
     function toast(msg) {
         const t = document.getElementById('toast');
@@ -118,40 +113,47 @@
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if(id === 'rekapPage') renderRekap();
+        if(id === 'agendaPage') renderAgenda();
     }
 
     function prosesLogin() {
-        const pass = document.getElementById('logPass').value;
-        if(pass.length < 8 || !/[A-Z]/.test(pass)) return toast("Password tidak valid!");
+        const p = document.getElementById('logPass').value;
+        if(p.length < 8 || !/[A-Z]/.test(p)) return toast("Format Password Salah!");
         nav('dashboardPage');
     }
 
     function simpanData() {
-        const data = { matkul: document.getElementById('m').value, hari: document.getElementById('h').value, jam: document.getElementById('j').value, ruangan: document.getElementById('r').value };
-        db.push(data);
+        const d = { matkul: document.getElementById('m').value, hari: document.getElementById('h').value, jam: document.getElementById('j').value, ruangan: document.getElementById('r').value };
+        if(!d.matkul || !d.jam) return toast("Lengkapi data!");
+        db.push(d);
         localStorage.setItem('mhs_db', JSON.stringify(db));
+        toast("Data Disimpan!");
         nav('rekapPage');
     }
 
     function renderRekap() {
         const area = document.getElementById('rekapList'); area.innerHTML = "";
         db.forEach(i => {
-            area.innerHTML += `<div class="list-item"><div><b>${i.matkul}</b><br><small>${i.hari}, ${i.jam}</small></div><span style="color:#8E8E93">${i.ruangan}</span></div>`;
+            area.innerHTML += `<div class="list-item"><b>${i.matkul}</b><br><small>${i.hari} | ${i.jam} | Ruang: ${i.ruangan}</small></div>`;
         });
     }
 
+    function renderAgenda() {
+        const area = document.getElementById('agendaList');
+        const hariIni = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
+        area.innerHTML = `<p style="text-align:center; color:#8E8E93">Hari ini: ${hariIni}</p>`;
+        let f = db.filter(x => x.hari === hariIni);
+        f.length ? f.forEach(i => area.innerHTML += `<div class="list-item"><b>${i.matkul}</b><br><small>${i.jam} - ${i.ruangan}</small></div>`) : area.innerHTML += "<p style='text-align:center'>Tidak ada agenda.</p>";
+    }
+
     setInterval(() => {
-        const skrg = new Date();
-        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][skrg.getDay()];
+        const n = new Date();
+        const h = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][n.getDay()];
         db.forEach(item => {
-            if(item.hari === hari) {
-                const [h, m] = item.jam.split(':').map(Number);
-                if ((h * 60 + m) - (skrg.getHours() * 60 + skrg.getMinutes()) === 10) {
-                    cordova.plugins.notification.local.schedule({
-                        title: 'Reminder Kuliah!',
-                        text: `10 Menit lagi: ${item.matkul}`,
-                        foreground: true, vibrate: true
-                    });
+            if(item.hari === h) {
+                const [jam, min] = item.jam.split(':').map(Number);
+                if ((jam * 60 + min) - (n.getHours() * 60 + n.getMinutes()) === 10) {
+                    cordova.plugins.notification.local.schedule({ title: 'Jadwal Kuliah', text: `10 Menit lagi: ${item.matkul}`, foreground: true });
                 }
             }
         });

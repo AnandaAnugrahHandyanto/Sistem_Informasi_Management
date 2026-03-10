@@ -21,8 +21,8 @@ jobs:
 
       - name: Build APK
         run: |
-          cordova platform add android
-          mkdir -p www
+          cordova platform add android@13.0.0
+          find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
           cordova build android --debug
 
       - name: Upload APK
