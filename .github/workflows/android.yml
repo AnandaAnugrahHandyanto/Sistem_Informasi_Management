@@ -24,7 +24,8 @@ jobs:
       - name: Build APK
         run: |
           cordova platform add android@13.0.0
-          echo "Migrating Java source files and fixing Media paths..."
+          echo "Migrating Java source files..."
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.media.session.MediaSessionCompat/androidx.media.MediaSessionCompat/g' {} +
           find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/androidx.v4.media.session.MediaSessionCompat/androidx.media.MediaSessionCompat/g' {} +
           find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.app.NotificationCompat/androidx.core.app.NotificationCompat/g' {} +
           find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.app.NotificationManagerCompat/androidx.core.app.NotificationManagerCompat/g' {} +
@@ -32,7 +33,7 @@ jobs:
           find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.content.FileProvider/androidx.core.content.FileProvider/g' {} +
           find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support./androidx./g' {} +
           find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
-          sed -i '/dependencies {/a \    implementation "androidx.media:media:1.7.0"' platforms/android/app/build.gradle
+          echo "dependencies { implementation 'androidx.media:media:1.7.0' }" > platforms/android/app/build-extras.gradle
           echo "android.useAndroidX=true" >> platforms/android/gradle.properties
           echo "android.enableJetifier=true" >> platforms/android/gradle.properties
           cordova build android --debug
