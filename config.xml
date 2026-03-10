@@ -1,32 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.unpam.jadwal" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Jadwal Mahasiswa UNPAM</name>
-    
-    <description>
-        Aplikasi Manajemen Jadwal Kuliah Mahasiswa dengan fitur Pengingat Otomatis.
-    </description>
-    
-    <author email="ananda@student.unpam.ac.id" href="https://github.com/AnandaAnugrahHandyanto">
-        Ananda Anugrah & Team
-    </author>
-
+    <name>JadwalMHS</name>
+    <description>Aplikasi Jadwal Kuliah</description>
+    <author email="dev@unpam.ac.id">Ananda Anugrah</author>
     <content src="index.html" />
-
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-
     <platform name="android">
-        <preference name="Fullscreen" value="false" />
         <preference name="Orientation" value="portrait" />
-        
-        <icon src="www/manifest.json" />
     </platform>
-
-    <plugin name="cordova-plugin-whitelist" spec="1" />
-    <plugin name="cordova-plugin-vibration" spec="^3.1.1" />
-    <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2" />
-
-    <preference name="AllowInlineMediaPlayback" value="true" />
-    <preference name="DisallowOverscroll" value="true" />
 </widget>

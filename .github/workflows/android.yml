@@ -20,10 +20,8 @@ jobs:
 
       - name: Build APK
         run: |
-          cordova create build_tmp com.unpam.jadwal JadwalMHS
-          cp -r www/* build_tmp/www/
-          cd build_tmp
           cordova platform add android
+          mkdir -p www
           cordova build android --debug
 
       - name: Upload APK
