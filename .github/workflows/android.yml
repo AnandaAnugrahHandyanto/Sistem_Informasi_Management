@@ -24,8 +24,16 @@ jobs:
       - name: Build APK
         run: |
           cordova platform add android@13.0.0
+          echo "Migrating Java source files to AndroidX..."
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.app.NotificationCompat/androidx.core.app.NotificationCompat/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.app.NotificationManagerCompat/androidx.core.app.NotificationManagerCompat/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.app.RemoteInput/androidx.core.app.RemoteInput/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.content.FileProvider/androidx.core.content.FileProvider/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.util.ArraySet/androidx.collection.ArraySet/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.util.Pair/androidx.core.util.Pair/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support.v4.media.app.NotificationCompat/androidx.media.app.NotificationCompat/g' {} +
+          find platforms/android/app/src/main/java -name "*.java" -exec sed -i 's/android.support./androidx./g' {} +
           find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
-          npx jetifier -p platforms/android
           echo "android.useAndroidX=true" >> platforms/android/gradle.properties
           echo "android.enableJetifier=true" >> platforms/android/gradle.properties
           cordova build android --debug
