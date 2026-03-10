@@ -23,6 +23,7 @@ jobs:
         run: |
           cordova platform add android@13.0.0
           find platforms/android/ -name "*.gradle" -exec sed -i 's/compile /implementation /g' {} +
+          sed -i 's/<manifest/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' platforms/android/app/src/main/AndroidManifest.xml          
           cordova build android --debug
 
       - name: Upload APK
