@@ -1,0 +1,34 @@
+name: Build Android APK
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Build APK
+        run: |
+          cordova create build_tmp com.unpam.jadwal JadwalMHS
+          cp -r www/* build_tmp/www/
+          cd build_tmp
+          cordova platform add android
+          cordova build android --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: build_tmp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
