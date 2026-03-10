@@ -45,9 +45,9 @@
     <div id="dashboardPage" class="page">
         <div class="header"><h2>DASHBOARD</h2></div>
         <div style="margin-top: 20px;">
-            <button class="btn btn-dash" onclick="nav('rekapPage')">📅 Jadwal Kuliah</button>
-            <button class="btn btn-dash" onclick="nav('rekapPage')">📊 Rekap Jadwal</button>
-            <button class="btn btn-dash" onclick="nav('agendaPage')">⏱ Agenda Harian</button>
+            <button class="btn btn-dash" onclick="nav('rekapPage')">Jadwal Kuliah</button>
+            <button class="btn btn-dash" onclick="nav('rekapPage')">Rekap Jadwal</button>
+            <button class="btn btn-dash" onclick="nav('agendaPage')">Agenda Harian</button>
             <button class="btn btn-dash" onclick="toast('Profil: Mahasiswa Aktif')">👤 Profil</button>
             <button class="btn btn-main" style="margin-top: 50px;" onclick="nav('loginPage')">LOGOUT</button>
         </div>
@@ -81,8 +81,15 @@
     </div>
 </div>
 
+<script src="cordova.js"></script>
 <script>
     let db = JSON.parse(localStorage.getItem('mhs_db')) || [];
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+        console.log("Android Native Ready");
+        requestNotificationPermission();
+    }
 
     function toast(msg) {
         const t = document.getElementById('customAlert');
@@ -137,10 +144,33 @@
         const hariIni = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
         area.innerHTML = `<p style="text-align:center">Hari ini: ${hariIni}</p>`;
         let filtered = db.filter(x => x.hari === hariIni).sort((a,b) => a.jam.localeCompare(b.jam));
-        filtered.length ? filtered.forEach(i => area.innerHTML += `<div class="schedule-item"><strong>${i.jam} - ${i.matkul}</strong></div>`) : area.innerHTML += "<p style='text-align:center; opacity:0.5'>Kosong</p>";
+        if(filtered.length) {
+            filtered.forEach(i => area.innerHTML += `<div class="schedule-item"><strong>${i.jam} - ${i.matkul}</strong><br><small>${i.ruangan}</small></div>`);
+        } else {
+            area.innerHTML += "<p style='text-align:center; opacity:0.5'>Tidak ada jadwal hari ini</p>";
+        }
     }
 
-    function requestNotificationPermission() { if ("Notification" in window) Notification.requestPermission(); }
+    function requestNotificationPermission() {
+        if (window.cordova && cordova.plugins && cordova.plugins.notification) {
+            cordova.plugins.notification.local.requestPermission(function (granted) {
+                console.log("Permission granted: " + granted);
+            });
+        }
+    }
+
+    function tampilkanNotifikasi(matkul, ruang) {
+        if (window.cordova && cordova.plugins && cordova.plugins.notification) {
+            cordova.plugins.notification.local.schedule({
+                title: 'Pengingat Kuliah!',
+                text: `10 Menit lagi kelas ${matkul} di ${ruang}`,
+                foreground: true,
+                vibrate: true,
+                priority: 1
+            });
+        }
+        toast(`PENGINGAT: 10 Menit lagi ${matkul}!`);
+    }
 
     setInterval(() => {
         const skrg = new Date();
@@ -148,9 +178,11 @@
         db.forEach(item => {
             if(item.hari === hari) {
                 const [h, m] = item.jam.split(':').map(Number);
-                if ((h * 60 + m) - (skrg.getHours() * 60 + skrg.getMinutes()) === 10) {
-                    if (Notification.permission === "granted") new Notification("Kelas!", { body: `10 Menit lagi: ${item.matkul}` });
-                    toast(`10 Menit lagi: ${item.matkul}`);
+                const totalMenitJadwal = h * 60 + m;
+                const totalMenitSekarang = skrg.getHours() * 60 + skrg.getMinutes();
+
+                if (totalMenitJadwal - totalMenitSekarang === 10) {
+                    tampilkanNotifikasi(item.matkul, item.ruangan);
                 }
             }
         });

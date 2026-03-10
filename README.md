@@ -10,4 +10,4 @@ Aplikasi berbasis WebView untuk membantu mahasiswa UNPAM mengelola jadwal kuliah
 
 ## Kolaborator
 - Ananda Anugrah H (Developer)
-- Ragiel Unpam (QA/Idea)
+- Ahmad Ragiel Z (QA/Idea)
