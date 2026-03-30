@@ -42,6 +42,13 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* make container fluid and center on wide screens */
+.container {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 16px;
+}
+
 /* HEADER */
 
 .header {
@@ -124,6 +131,80 @@ body {
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
+}
+
+/* layout for cards: stack on mobile, grid on wider screens */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 700px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .container {
+    padding: 28px;
+    padding-bottom: 120px;
+  }
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .container {
+    padding: 32px;
+    padding-bottom: 140px;
+  }
+}
+
+/* navbar responsive: fit to container width on small screens, dock inside right on large screens */
+.navbar {
+  width: min(92%, 720px);
+}
+
+@media (min-width: 900px) {
+  .navbar {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 24px;
+  }
+}
+
+@media (min-width: 1100px) {
+  /* on very large screens, position navbar relative inside container bottom */
+  .navbar {
+    position: fixed;
+    bottom: 28px;
+  }
+}
+
+/* small device adjustments */
+@media (max-width: 360px) {
+  .container {
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .stat-value {
+    font-size: 16px;
+  }
+  .nav-item {
+    font-size: 20px;
+    padding: 6px;
+  }
 }
 
 .card:hover {
