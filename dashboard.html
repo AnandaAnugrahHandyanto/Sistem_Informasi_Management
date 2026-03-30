@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h2 id="greeting">Halo 👋</h2>
+            <p id="date"></p>
+        </div>
+
+        <!-- CARD -->
+        <div class="cards">
+
+            <div class="card">
+                <h3>Jadwal Hari Ini</h3>
+                <div id="jadwalList"></div>
+            </div>
+
+            <div class="card">
+                <h3>Agenda</h3>
+                <ul id="agendaList"></ul>
+            </div>
+
+            <div class="card">
+                <h3>Reminder</h3>
+                <ul id="reminderList"></ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="nav-item active" onclick="goDashboard()">
+            <i class='bx bx-home'></i>
+        </div>
+        <div class="nav-item" onclick="goJadwal()">
+            <i class='bx bx-book'></i>
+        </div>
+        <div class="nav-item" onclick="goRekap()">
+            <i class='bx bx-bar-chart'></i>
+        </div>
+        <div class="nav-item" onclick="goAgenda()">
+            <i class='bx bx-task'></i>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

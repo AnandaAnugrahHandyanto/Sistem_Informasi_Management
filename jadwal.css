@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #e2e8f0;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* APP CONTAINER */
+
+.app {
+    width: 380px;
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 15px;
+}
+
+
+/* HEADER */
+
+.header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+
+/* TABS */
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    background: #e5e7eb;
+    cursor: pointer;
+}
+
+.tabs .active {
+    background: #3b82f6;
+    color: white;
+}
+
+
+/* GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: 60px repeat(5, 1fr);
+    grid-auto-rows: 80px;
+    gap: 6px;
+}
+
+
+/* DAY HEADER */
+
+.day {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+
+/* TIME */
+
+.time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #64748b;
+}
+
+
+/* SLOT (GRID BACKGROUND) */
+
+.slot {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+
+/* CLASS CARD */
+
+.class {
+    border-radius: 12px;
+    padding: 8px;
+    font-size: 11px;
+    color: white;
+    font-weight: 500;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* DELETE BTN */
+
+.class button {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    border: none;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* COLORS */
+
+.blue {
+    background: #3b82f6;
+}
+
+.green {
+    background: #10b981;
+}
+
+.orange {
+    background: #f59e0b;
+}
+
+.red {
+    background: #ef4444;
+}
+
+
+/* BUTTON */
+
+.add-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content input,
+.modal-content select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-content button {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+}
+
+.dashboard-btn {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+}
+
+.cancel {
+    background: #ef4444;
+}
+
+
+/* NAVBAR */
+
+.navbar {
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    height: 65px;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+}
+
+.nav-item {
+    font-size: 22px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    color: #3b82f6;
+}

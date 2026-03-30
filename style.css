@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #e9edf3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+/* Container */
+
+.container {
+    width: 100%;
+    max-width: 400px;
+}
+
+
+/* Card */
+
+.card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Image */
+
+.image img {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+
+/* Title */
+
+h2 {
+    margin-bottom: 5px;
+}
+
+p {
+    color: gray;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+
+/* Input */
+
+.input-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px 40px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+.input-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
+}
+
+
+/* Toggle password */
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: gray;
+}
+
+
+/* Forgot */
+
+.forgot {
+    text-align: right;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.forgot a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+
+/* Button */
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(to right, #3b82f6, #2563eb);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+
+/* Help */
+
+.help {
+    font-size: 13px;
+}
+
+.help a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+
+/* Divider */
+
+.divider {
+    margin: 15px 0;
+    font-size: 12px;
+    color: gray;
+}
+
+
+/* Social */
+
+.social {
+    display: flex;
+    gap: 10px;
+}
+
+.social button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.google {
+    background: #f1f1f1;
+}
+
+.facebook {
+    background: #3b82f6;
+    color: white;
+}
