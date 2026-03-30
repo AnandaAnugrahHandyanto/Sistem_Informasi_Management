@@ -201,3 +201,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// =========================
+// Floating navbar: hide on scroll down, show on scroll up
+// =========================
+(function setupFloatingNavbar() {
+  const navbar = document.querySelector(".navbar");
+  if (!navbar) return;
+  let lastY = window.scrollY || 0;
+  let ticking = false;
+
+  window.addEventListener("scroll", () => {
+    const y = window.scrollY || 0;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (y - lastY > 10) navbar.classList.add("hide");
+        else if (lastY - y > 10) navbar.classList.remove("hide");
+        lastY = y;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+})();

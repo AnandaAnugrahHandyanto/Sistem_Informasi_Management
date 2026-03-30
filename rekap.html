@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rekap</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="rekap.css" />
+    <style>
+      /* small fallback */
+      .chart-placeholder {
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9fb0d8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="header-top">
+          <div class="avatar">R</div>
+          <div>
+            <h2>Rekap</h2>
+            <p>Ringkasan aktivitas dan statistik</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARDS -->
+      <div class="cards">
+        <div class="card">
+          <h3>Total Jadwal</h3>
+          <div class="stat-large" id="totalJadwal">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Total Agenda</h3>
+          <div class="stat-large" id="totalAgenda">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Total Reminder</h3>
+          <div class="stat-large" id="totalReminder">0</div>
+        </div>
+      </div>
+
+      <!-- CHART -->
+      <div class="card">
+        <h3>Grafik Mingguan</h3>
+        <div class="chart-placeholder">
+          (Placeholder grafik — tambahkan Chart.js bila perlu)
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <div class="nav-item" onclick="goDashboard()">
+        <i class="bx bx-home"></i>
+      </div>
+      <div class="nav-item" onclick="goJadwal()">
+        <i class="bx bx-book"></i>
+      </div>
+      <div class="nav-item active" onclick="goRekap()">
+        <i class="bx bx-bar-chart"></i>
+      </div>
+      <div class="nav-item" onclick="goAgenda()">
+        <i class="bx bx-task"></i>
+      </div>
+    </div>
+
+    <script>
+      // populate counts from localStorage (simple, same logic used elsewhere)
+      (function () {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) return;
+
+        // jadwalUser structure used in dashboard.js
+        const semuaJadwal =
+          JSON.parse(localStorage.getItem("jadwalUser")) || {};
+        const jadwalUser = semuaJadwal[user.nama] || [];
+
+        const semuaAgenda =
+          JSON.parse(localStorage.getItem("agendaUser")) || {};
+        const agenda = semuaAgenda[user.nama] || [];
+
+        const reminder = JSON.parse(localStorage.getItem("reminder")) || [];
+
+        document.getElementById("totalJadwal").innerText =
+          jadwalUser.length || 0;
+        document.getElementById("totalAgenda").innerText = agenda.length || 0;
+        document.getElementById("totalReminder").innerText =
+          reminder.length || 0;
+      })();
+
+      function goDashboard() {
+        window.location.href = "dashboard.html";
+      }
+      function goJadwal() {
+        window.location.href = "jadwal.html";
+      }
+      function goRekap() {
+        window.location.href = "rekap.html";
+      }
+      function goAgenda() {
+        window.location.href = "agenda.html";
+      }
+    </script>
+  </body>
+</html>

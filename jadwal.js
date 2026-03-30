@@ -3,107 +3,126 @@ const grid = document.getElementById("grid");
 let jadwal = JSON.parse(localStorage.getItem("jadwal")) || [];
 
 function renderGrid() {
-    grid.innerHTML = "";
+  grid.innerHTML = "";
 
-    const days = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
-    const times = ["08:00", "10:00", "11:00", "13:00"];
+  const days = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+  const times = ["08:00", "10:00", "11:00", "13:00"];
 
-    // HEADER
-    days.forEach(day => {
-        const div = document.createElement("div");
-        div.className = "day";
-        div.innerText = day;
-        grid.appendChild(div);
-    });
+  // HEADER
+  days.forEach((day) => {
+    const div = document.createElement("div");
+    div.className = "day";
+    div.innerText = day;
+    grid.appendChild(div);
+  });
 
-    // TIME + SLOT
-    times.forEach((time, i) => {
+  // TIME + SLOT
+  times.forEach((time, i) => {
+    // JAM
+    const timeDiv = document.createElement("div");
+    timeDiv.className = "time";
+    timeDiv.innerText = time;
+    timeDiv.style.gridColumn = 1;
+    timeDiv.style.gridRow = i + 2;
+    grid.appendChild(timeDiv);
 
-        // JAM
-        const timeDiv = document.createElement("div");
-        timeDiv.className = "time";
-        timeDiv.innerText = time;
-        timeDiv.style.gridColumn = 1;
-        timeDiv.style.gridRow = i + 2;
-        grid.appendChild(timeDiv);
+    // SLOT BACKGROUND
+    for (let d = 1; d <= 5; d++) {
+      const slot = document.createElement("div");
+      slot.className = "slot";
+      slot.style.gridColumn = d + 1;
+      slot.style.gridRow = i + 2;
+      grid.appendChild(slot);
+    }
+  });
 
-        // SLOT BACKGROUND
-        for (let d = 1; d <= 5; d++) {
-            const slot = document.createElement("div");
-            slot.className = "slot";
-            slot.style.gridColumn = d + 1;
-            slot.style.gridRow = i + 2;
-            grid.appendChild(slot);
-        }
-    });
+  // JADWAL
+  jadwal.forEach((j, index) => {
+    const div = document.createElement("div");
+    div.className = "class " + j.warna;
 
-    // JADWAL
-    jadwal.forEach((j, index) => {
-        const div = document.createElement("div");
-        div.className = "class " + j.warna;
+    div.style.gridColumn = parseInt(j.hari) + 1;
+    div.style.gridRow = parseInt(j.jam) + 1;
 
-        div.style.gridColumn = parseInt(j.hari) + 1;
-        div.style.gridRow = parseInt(j.jam) + 1;
-
-        div.innerHTML = `
+    div.innerHTML = `
             ${j.matkul}
             <button onclick="hapusJadwal(${index})">✕</button>
         `;
 
-        grid.appendChild(div);
-    });
+    grid.appendChild(div);
+  });
 }
 
 // MODAL
 function openModal() {
-    document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal").style.display = "flex";
 }
 
 function closeModal() {
-    document.getElementById("modal").style.display = "none";
+  document.getElementById("modal").style.display = "none";
 }
 
 // TAMBAH
 function tambahJadwal() {
-    const matkul = document.getElementById("matkul").value;
-    const hari = document.getElementById("hari").value;
-    const jam = document.getElementById("jam").value;
-    const warna = document.getElementById("warna").value;
+  const matkul = document.getElementById("matkul").value;
+  const hari = document.getElementById("hari").value;
+  const jam = document.getElementById("jam").value;
+  const warna = document.getElementById("warna").value;
 
-    if (!matkul) return alert("Isi mata kuliah!");
+  if (!matkul) return alert("Isi mata kuliah!");
 
-    jadwal.push({ matkul, hari, jam, warna });
-    localStorage.setItem("jadwal", JSON.stringify(jadwal));
+  jadwal.push({ matkul, hari, jam, warna });
+  localStorage.setItem("jadwal", JSON.stringify(jadwal));
 
-    closeModal();
-    renderGrid();
+  closeModal();
+  renderGrid();
 }
 
 // HAPUS
 function hapusJadwal(index) {
-    jadwal.splice(index, 1);
-    localStorage.setItem("jadwal", JSON.stringify(jadwal));
-    renderGrid();
+  jadwal.splice(index, 1);
+  localStorage.setItem("jadwal", JSON.stringify(jadwal));
+  renderGrid();
 }
 
 function backDashboard() {
-    window.location.href = "dashboard.html";
+  window.location.href = "dashboard.html";
 }
 
 function goDashboard() {
-    window.location.href = "dashboard.html";
+  window.location.href = "dashboard.html";
 }
 
 function goJadwal() {
-    window.location.href = "jadwal.html";
+  window.location.href = "jadwal.html";
 }
 
 function goRekap() {
-    window.location.href = "rekap.html";
+  window.location.href = "rekap.html";
 }
 
 function goAgenda() {
-    window.location.href = "agenda.html";
+  window.location.href = "agenda.html";
 }
 // INIT
 renderGrid();
+
+// Floating navbar: hide on scroll down, show on scroll up
+(function setupFloatingNavbar() {
+  const navbar = document.querySelector(".navbar");
+  if (!navbar) return;
+  let lastY = window.scrollY || 0;
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    const y = window.scrollY || 0;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (y - lastY > 10) navbar.classList.add("hide");
+        else if (lastY - y > 10) navbar.classList.remove("hide");
+        lastY = y;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+})();

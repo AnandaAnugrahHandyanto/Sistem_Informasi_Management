@@ -243,10 +243,20 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 .nav-item {
-  font-size: 22px;
+  font-size: 20px;
   color: #7f9fc5;
-  padding: 8px;
+  width: 56px;
+  height: 44px;
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 10px;
+  box-sizing: border-box;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 .nav-item.active {
   color: #60a5fa;
@@ -278,4 +288,15 @@ body {
   .grid {
     grid-auto-rows: 90px;
   }
+}
+
+/* floating navbar hide/show transition */
+.navbar {
+  transition:
+    transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1),
+    opacity 0.28s ease;
+}
+.navbar.hide {
+  transform: translateX(-50%) translateY(120%);
+  opacity: 0;
 }
