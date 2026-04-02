@@ -11,6 +11,46 @@ let editIndex = null;
 const days = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
 const times = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
+function timeToMinutes(t) {
+  if (!t) return 0;
+  // expect HH:MM 24-hour
+  const parts = t.split(":");
+  const h = parseInt(parts[0], 10) || 0;
+  const m = parseInt(parts[1], 10) || 0;
+  return h * 60 + m;
+}
+
+function normalizeTime(t) {
+  if (!t) return "";
+  // convert AM/PM to 24-hour if present
+  const low = String(t).trim().toLowerCase();
+  const ampmMatch = low.match(/(am|pm)$/);
+  if (ampmMatch) {
+    const conv = parseAMPMto24(low);
+    if (conv) return conv;
+  }
+  // ensure HH:MM two digits
+  const p = t.split(":");
+  if (p.length < 2) return t;
+  const hh = String(Number(p[0])).padStart(2, "0");
+  const mm = String(Number(p[1])).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+function parseAMPMto24(s) {
+  if (!s) return null;
+  // accept formats like "1:30 pm", "01:30PM", "1 pm"
+  const cleaned = s.replace(/\./g, "").trim().toLowerCase();
+  const m = cleaned.match(/^(\d{1,2})(?::(\d{1,2}))?\s*(am|pm)$/);
+  if (!m) return null;
+  let hh = parseInt(m[1], 10);
+  const mm = m[2] ? parseInt(m[2], 10) : 0;
+  const ap = m[3];
+  if (ap === "pm" && hh < 12) hh += 12;
+  if (ap === "am" && hh === 12) hh = 0;
+  return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+}
+
 function saveJadwal() {
   semuaJadwal[user.nama] = jadwal;
   localStorage.setItem("jadwalUser", JSON.stringify(semuaJadwal));
@@ -95,8 +135,16 @@ function clearModal() {
 function tambahJadwal() {
   const matkul = document.getElementById("matkul").value.trim();
   const hari = document.getElementById("hari").value;
-  const jamMulai = document.getElementById("jamMulai").value;
-  const jamSelesai = document.getElementById("jamSelesai").value;
+  let jamMulai = document.getElementById("jamMulai").value;
+  let jamSelesai = document.getElementById("jamSelesai").value;
+  jamMulai = normalizeTime(jamMulai);
+  jamSelesai = normalizeTime(jamSelesai);
+  // validation: harus format 24h dan selesai > mulai
+  if (timeToMinutes(jamSelesai) <= timeToMinutes(jamMulai)) {
+    return alert(
+      "Waktu selesai harus lebih besar dari waktu mulai (format 24-jam).",
+    );
+  }
   const warna = document.getElementById("warna").value;
   if (!matkul) return alert("Isi mata kuliah!");
 

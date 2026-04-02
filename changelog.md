@@ -20,6 +20,11 @@
 - Navbar: tambahkan `z-index` dan `pointer-events` untuk mengatasi masalah klik tidak responsif.
 - Konsolidasi penyimpanan: pindah dari kunci global lama (`jadwal`) ke `jadwalUser` per-user.
 - Modal input jadwal: ubah input jam menjadi `jamMulai` dan `jamSelesai`.
+- Modal input jadwal: ubah input jam menjadi `jamMulai` dan `jamSelesai`.
+- Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
+- Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
+- AM/PM sekarang otomatis dinormalisasi ke format 24-jam saat disimpan (mis. "1:30 PM" -> "13:30").
+- Login: jika belum ada akun tersimpan, aplikasi kini menanyakan dan dapat otomatis membuat akun lokal dari NIM/password yang dimasukkan (memudahkan akses tanpa registrasi terpisah).
 - Dashboard: gabungkan reminder tersimpan dan reminder pintar (kelas yang akan datang dalam 30 menit).
 
 ## Perbaikan Bug

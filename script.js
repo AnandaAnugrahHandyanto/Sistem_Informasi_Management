@@ -19,17 +19,25 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   // validasi login
-  if (
-    storedUser &&
-    nim === storedUser.nim &&
-    password === storedUser.password
-  ) {
-    localStorage.setItem("isLogin", "true");
-
-    alert("Login berhasil!");
-    window.location.href = "dashboard.html";
+  if (storedUser) {
+    if (nim === storedUser.nim && password === storedUser.password) {
+      localStorage.setItem("isLogin", "true");
+      alert("Login berhasil!");
+      window.location.href = "dashboard.html";
+    } else {
+      alert("NIM atau Password salah!");
+    }
   } else {
-    alert("NIM atau Password salah!");
+    // jika belum ada user tersimpan, tawarkan membuat akun otomatis
+    const create = confirm(
+      "Akun tidak ditemukan. Buat akun baru dengan NIM ini dan password yang dimasukkan?",
+    );
+    if (!create) return alert("Login dibatalkan.");
+    const newUser = { nama: "Mahasiswa", nim, email: "", password };
+    localStorage.setItem("user", JSON.stringify(newUser));
+    localStorage.setItem("isLogin", "true");
+    alert("Akun dibuat dan login berhasil!");
+    window.location.href = "dashboard.html";
   }
 });
 
