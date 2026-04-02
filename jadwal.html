@@ -49,20 +49,8 @@
         </select>
 
         <div style="display: flex; gap: 8px">
-          <select id="jamMulai">
-            <option value="08:00">08:00</option>
-            <option value="09:00">09:00</option>
-            <option value="10:00">10:00</option>
-            <option value="11:00">11:00</option>
-            <option value="13:00">13:00</option>
-          </select>
-          <select id="jamSelesai">
-            <option value="09:30">09:30</option>
-            <option value="10:30">10:30</option>
-            <option value="11:30">11:30</option>
-            <option value="13:30">13:30</option>
-            <option value="15:00">15:00</option>
-          </select>
+          <input type="time" id="jamMulai" value="08:00" step="60" />
+          <input type="time" id="jamSelesai" value="09:30" step="60" />
         </div>
 
         <select id="warna">
