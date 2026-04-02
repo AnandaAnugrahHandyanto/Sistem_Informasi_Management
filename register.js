@@ -1,15 +1,17 @@
 // Toggle password
 function togglePassword() {
-    const password = document.getElementById("password");
-    if (password.type === "password") {
-        password.type = "text";
-    } else {
-        password.type = "password";
-    }
+  const password = document.getElementById("password");
+  if (password.type === "password") {
+    password.type = "text";
+  } else {
+    password.type = "password";
+  }
 }
 
 // Register logic
-document.getElementById("registerForm").addEventListener("submit", function(e) {
+document
+  .getElementById("registerForm")
+  .addEventListener("submit", function (e) {
     e.preventDefault();
 
     const nama = document.getElementById("nama").value;
@@ -18,16 +20,16 @@ document.getElementById("registerForm").addEventListener("submit", function(e) {
     const password = document.getElementById("password").value;
 
     if (password.length < 8) {
-        alert("Password minimal 8 karakter!");
-        return;
+      alert("Password minimal 8 karakter!");
+      return;
     }
 
     // Simpan ke localStorage
     const user = {
-        nama,
-        nim,
-        email,
-        password
+      nama,
+      nim,
+      email,
+      password,
     };
 
     localStorage.setItem("user", JSON.stringify(user));
@@ -35,5 +37,5 @@ document.getElementById("registerForm").addEventListener("submit", function(e) {
     alert("Registrasi berhasil!");
 
     // Redirect ke login
-    window.location.href = "rgl.html";
-});
+    window.location.href = "index.html";
+  });

@@ -1,90 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jadwal Kuliah</title>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="jadwal.css">
-</head>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="jadwal.css" />
+  </head>
 
-<body>
-
+  <body>
     <div class="app">
-
-        <!-- header -->
-        <div class="header">
-            <h2>Jadwal Kuliah</h2>
-            <button onclick="backDashboard()" class="dashboard-btn">
-            ⬅️ Kembali ke Dashboard
+      <!-- header -->
+      <div class="header">
+        <h2>Jadwal Kuliah</h2>
+        <button onclick="backDashboard()" class="dashboard-btn">
+          ⬅️ Kembali ke Dashboard
         </button>
-        </div>
+      </div>
 
-        <!-- tab -->
-        <div class="tabs">
-            <button class="active">Minggu Ini</button>
-            <button>Kalender</button>
-        </div>
+      <!-- tab -->
+      <div class="tabs">
+        <button class="active">Minggu Ini</button>
+        <button>Kalender</button>
+      </div>
 
-        <!-- grid -->
-        <div class="grid" id="grid"></div>
+      <!-- grid -->
+      <div class="grid" id="grid"></div>
 
-        <button class="add-btn" onclick="openModal()">+ Tambah Jadwal</button>
-
+      <button class="add-btn" onclick="openModal()">+ Tambah Jadwal</button>
     </div>
 
     <!-- modal -->
     <div class="modal" id="modal">
-        <div class="modal-content">
-            <h3>Tambah Jadwal</h3>
+      <div class="modal-content">
+        <h3>Tambah Jadwal</h3>
 
-            <input type="text" id="matkul" placeholder="Mata Kuliah">
+        <input type="text" id="matkul" placeholder="Mata Kuliah" />
 
-            <select id="hari">
-            <option value="1">Senin</option>
-            <option value="2">Selasa</option>
-            <option value="3">Rabu</option>
-            <option value="4">Kamis</option>
-            <option value="5">Jumat</option>
+        <select id="hari">
+          <option value="1">Senin</option>
+          <option value="2">Selasa</option>
+          <option value="3">Rabu</option>
+          <option value="4">Kamis</option>
+          <option value="5">Jumat</option>
         </select>
 
-            <select id="jam">
-            <option value="1">08:00</option>
-            <option value="2">10:00</option>
-            <option value="3">11:00</option>
-            <option value="4">13:00</option>
-        </select>
-
-            <select id="warna">
-            <option value="blue">Biru</option>
-            <option value="green">Hijau</option>
-            <option value="orange">Orange</option>
-            <option value="red">Merah</option>
-        </select>
-
-            <button onclick="tambahJadwal()">Simpan</button>
-            <button onclick="closeModal()" class="cancel">Batal</button>
+        <div style="display: flex; gap: 8px">
+          <select id="jamMulai">
+            <option value="08:00">08:00</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="13:00">13:00</option>
+          </select>
+          <select id="jamSelesai">
+            <option value="09:30">09:30</option>
+            <option value="10:30">10:30</option>
+            <option value="11:30">11:30</option>
+            <option value="13:30">13:30</option>
+            <option value="15:00">15:00</option>
+          </select>
         </div>
+
+        <select id="warna">
+          <option value="blue">Biru</option>
+          <option value="green">Hijau</option>
+          <option value="orange">Orange</option>
+          <option value="red">Merah</option>
+        </select>
+
+        <button onclick="tambahJadwal()">Simpan</button>
+        <button onclick="closeModal()" class="cancel">Batal</button>
+      </div>
     </div>
 
     <!-- navbar -->
     <div class="navbar">
-        <div class="nav-item active" onclick="goDashboard()">
-            <i class='bx bx-home'></i>
-        </div>
-        <div class="nav-item" onclick="goJadwal()">
-            <i class='bx bx-book'></i>
-        </div>
-        <div class="nav-item" onclick="goRekap()">
-            <i class='bx bx-bar-chart'></i>
-        </div>
-        <div class="nav-item" onclick="goAgenda()">
-            <i class='bx bx-task'></i>
-        </div>
+      <div class="nav-item active" onclick="goDashboard()">
+        <i class="bx bx-home"></i>
+      </div>
+      <div class="nav-item" onclick="goJadwal()">
+        <i class="bx bx-book"></i>
+      </div>
+      <div class="nav-item" onclick="goRekap()">
+        <i class="bx bx-bar-chart"></i>
+      </div>
+      <div class="nav-item" onclick="goAgenda()">
+        <i class="bx bx-task"></i>
+      </div>
     </div>
 
     <script src="jadwal.js"></script>
-</body>
-
+  </body>
 </html>

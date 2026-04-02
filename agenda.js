@@ -2,7 +2,7 @@
 let user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
-  window.location.href = "rgl.html";
+  window.location.href = "index.html";
 }
 
 // DATA PER USER

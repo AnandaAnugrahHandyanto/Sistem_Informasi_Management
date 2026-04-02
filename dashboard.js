@@ -5,7 +5,7 @@ const isLogin = localStorage.getItem("isLogin");
 
 if (!isLogin) {
   alert("Harus login dulu!");
-  window.location.href = "rgl.html";
+  window.location.href = "index.html";
 }
 
 // =========================
@@ -14,7 +14,7 @@ if (!isLogin) {
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
-  window.location.href = "rgl.html";
+  window.location.href = "index.html";
 }
 
 // =========================
