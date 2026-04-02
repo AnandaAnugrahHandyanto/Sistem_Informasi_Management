@@ -75,6 +75,19 @@ body {
   transform: translateY(-6px);
 }
 
+/* make input card stand out */
+.input-card {
+  background: linear-gradient(
+    90deg,
+    rgba(96, 165, 250, 0.06),
+    rgba(59, 130, 246, 0.04)
+  );
+  border: 1px solid rgba(96, 165, 250, 0.12);
+  padding: 12px;
+  gap: 10px;
+  align-items: center;
+}
+
 /* INPUT */
 
 .input-card {
@@ -83,11 +96,12 @@ body {
 }
 .input-card input {
   flex: 1;
-  padding: 10px;
+  padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.04);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
   color: #dbefff;
+  font-size: 14px;
 }
 
 /* BUTTON */
@@ -111,15 +125,27 @@ ul {
 /* ITEM */
 
 li {
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.01)
+  );
   padding: 12px;
   border-radius: 12px;
   margin-bottom: 10px;
-  font-size: 13px;
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #dbefff;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.card ul li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.4);
 }
 
 /* LEFT SIDE */
@@ -138,18 +164,21 @@ li {
   border: 2px solid #3b82f6;
   border-radius: 50%;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .checkbox.checked {
   background: #3b82f6;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.16);
 }
 
 /* TEXT */
 
 .agenda-text {
-  font-size: 13px;
+  font-size: 14px;
 }
-
 .agenda-text.done {
   text-decoration: line-through;
   color: #94a3b8;
@@ -181,7 +210,11 @@ li {
     padding: 16px;
   }
   .input-card input {
+    font-size: 14px;
+  }
+  li {
     font-size: 13px;
+    padding: 10px;
   }
 }
 

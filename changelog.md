@@ -25,6 +25,11 @@
 - Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
 - AM/PM sekarang otomatis dinormalisasi ke format 24-jam saat disimpan (mis. "1:30 PM" -> "13:30").
 - Login: jika belum ada akun tersimpan, aplikasi kini menanyakan dan dapat otomatis membuat akun lokal dari NIM/password yang dimasukkan (memudahkan akses tanpa registrasi terpisah).
+- Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
+- AM/PM sekarang otomatis dinormalisasi ke format 24-jam saat disimpan (mis. "1:30 PM" -> "13:30").
+- Agenda: perbaikan rendering di dashboard (sebelumnya menampilkan "[object Object]"); dashboard sekarang membaca `agendaUser[user.nama]` dan menampilkan teks dan status.
+- Desain halaman `agenda` diperbarui: input lebih modern, list item hover effect, responsive font sizes.
+- Login: jika belum ada akun tersimpan, aplikasi kini menanyakan dan dapat otomatis membuat akun lokal dari NIM/password yang dimasukkan (memudahkan akses tanpa registrasi terpisah).
 - Dashboard: gabungkan reminder tersimpan dan reminder pintar (kelas yang akan datang dalam 30 menit).
 
 ## Perbaikan Bug
