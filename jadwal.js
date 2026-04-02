@@ -80,8 +80,16 @@ function renderGrid() {
     for (let d = 1; d <= 5; d++) {
       const slot = document.createElement("div");
       slot.className = "slot";
+      slot.id = `slot-d${d}-r${i}`;
+      slot.dataset.day = d;
+      slot.dataset.row = i;
       slot.style.gridColumn = d + 1;
       slot.style.gridRow = i + 2;
+      // ensure slot can contain stacked items
+      slot.style.display = "flex";
+      slot.style.flexDirection = "column";
+      slot.style.gap = "6px";
+      slot.style.padding = "6px";
       grid.appendChild(slot);
     }
   });
@@ -108,7 +116,31 @@ function renderGrid() {
       <div style="margin-top:6px;font-size:12px">${j.jamMulai} - ${j.jamSelesai}</div>
     `;
 
-    grid.appendChild(div);
+    // render jadwal items inside corresponding slots to avoid overlap
+    const dayKey = Number(j.hari);
+    const startIdx = Math.max(0, times.indexOf(j.jamMulai));
+    const slotId = `slot-d${dayKey}-r${startIdx}`;
+    const slot = document.getElementById(slotId);
+    const item = document.createElement("div");
+    item.className = "class-item " + (j.warna || "blue");
+    item.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:700">${j.matkul}</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="editJadwal(${index})">✏️</button>
+          <button onclick="hapusJadwal(${index})">✕</button>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:12px">${j.jamMulai} - ${j.jamSelesai}</div>
+    `;
+    if (slot) slot.appendChild(item);
+    else {
+      // fallback: append to grid if slot missing
+      const div = document.createElement("div");
+      div.className = "class " + (j.warna || "blue");
+      div.innerText = j.matkul;
+      grid.appendChild(div);
+    }
   });
 }
 

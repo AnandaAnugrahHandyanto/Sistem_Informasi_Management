@@ -273,3 +273,128 @@ window.addEventListener("storage", function (e) {
   )
     refreshData();
 });
+
+// -----------------------------
+// Notifications: toggle, permission, schedule
+// -----------------------------
+let scheduledReminders = [];
+
+function swRegister() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+}
+
+function isNotifEnabled() {
+  try {
+    return localStorage.getItem("notif_" + user.nama) === "true";
+  } catch (e) {
+    return false;
+  }
+}
+
+function setNotifEnabled(v) {
+  try {
+    localStorage.setItem("notif_" + user.nama, v ? "true" : "false");
+  } catch (e) {}
+  const cb = document.getElementById("notifToggle");
+  if (cb) cb.checked = !!v;
+  if (v) requestPermissionAndSchedule();
+  else clearScheduledReminders();
+}
+
+function requestPermissionAndSchedule() {
+  if (!("Notification" in window))
+    return alert("Notifikasi tidak didukung di browser ini");
+  Notification.requestPermission().then((p) => {
+    if (p === "granted") scheduleReminders();
+    else alert("Izin notifikasi ditolak.");
+  });
+}
+
+function clearScheduledReminders() {
+  scheduledReminders.forEach((id) => clearTimeout(id));
+  scheduledReminders = [];
+}
+
+function scheduleReminders() {
+  clearScheduledReminders();
+  if (!isNotifEnabled()) return;
+  // get today's jadwal and schedule notification 30 minutes before start
+  let semuaJadwal = JSON.parse(localStorage.getItem("jadwalUser")) || {};
+  let jadwalUser = semuaJadwal[user.nama] || [];
+  const now = new Date();
+  jadwalUser.forEach((j) => {
+    try {
+      // only schedule items that have jamMulai and hari matching today
+      const hariIndex = new Date().toLocaleDateString("id-ID", {
+        weekday: "long",
+      });
+      // convert j.hari to weekday name or number
+      const dayName = hariIndex;
+      // accept numeric day index stored as string or number
+      let matchesToday = false;
+      if (typeof j.hari === "number")
+        matchesToday = j.hari === new Date().getDay();
+      else if (!isNaN(Number(j.hari)))
+        matchesToday = Number(j.hari) === new Date().getDay();
+      else if (typeof j.hari === "string")
+        matchesToday = j.hari.toLowerCase() === dayName.toLowerCase();
+      if (!matchesToday) return;
+      const t = j.jamMulai || j.jam || j.jamStart;
+      if (!t) return;
+      const parts = t.split(":");
+      if (parts.length < 2) return;
+      const target = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        Number(parts[0]),
+        Number(parts[1]),
+      );
+      const notifyAt = new Date(target.getTime() - 30 * 60 * 1000); // 30 minutes before
+      const ms = notifyAt.getTime() - Date.now();
+      if (ms <= 0) return; // past
+      const id = setTimeout(() => {
+        const title = `Pengingat: ${j.matkul || j.mata_kuliah || "Kelas"}`;
+        const body = `${j.jamMulai || t} • Mulai dalam 30 menit`;
+        // try service worker showNotification
+        if (
+          navigator.serviceWorker &&
+          navigator.serviceWorker.getRegistration
+        ) {
+          navigator.serviceWorker
+            .getRegistration()
+            .then((reg) => {
+              if (reg) reg.showNotification(title, { body, tag: "reminder" });
+              else new Notification(title, { body });
+            })
+            .catch(() => {
+              try {
+                new Notification(title, { body });
+              } catch (e) {}
+            });
+        } else {
+          try {
+            new Notification(title, { body });
+          } catch (e) {}
+        }
+      }, ms);
+      scheduledReminders.push(id);
+    } catch (e) {
+      /*ignore*/
+    }
+  });
+}
+
+// wire toggle UI on load
+document.addEventListener("DOMContentLoaded", () => {
+  swRegister();
+  const cb = document.getElementById("notifToggle");
+  if (cb) {
+    cb.checked = isNotifEnabled();
+    cb.addEventListener("change", () => setNotifEnabled(cb.checked));
+  }
+  // schedule if enabled
+  if (isNotifEnabled()) requestPermissionAndSchedule();
+});

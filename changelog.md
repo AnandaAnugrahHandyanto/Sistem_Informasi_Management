@@ -20,16 +20,10 @@
 - Navbar: tambahkan `z-index` dan `pointer-events` untuk mengatasi masalah klik tidak responsif.
 - Konsolidasi penyimpanan: pindah dari kunci global lama (`jadwal`) ke `jadwalUser` per-user.
 - Modal input jadwal: ubah input jam menjadi `jamMulai` dan `jamSelesai`.
-- Modal input jadwal: ubah input jam menjadi `jamMulai` dan `jamSelesai`.
-- Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
-- Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
-- AM/PM sekarang otomatis dinormalisasi ke format 24-jam saat disimpan (mis. "1:30 PM" -> "13:30").
-- Login: jika belum ada akun tersimpan, aplikasi kini menanyakan dan dapat otomatis membuat akun lokal dari NIM/password yang dimasukkan (memudahkan akses tanpa registrasi terpisah).
 - Input waktu sekarang mendukung entry manual 24-jam (HH:MM) dan divalidasi saat simpan.
 - AM/PM sekarang otomatis dinormalisasi ke format 24-jam saat disimpan (mis. "1:30 PM" -> "13:30").
 - Agenda: perbaikan rendering di dashboard (sebelumnya menampilkan "[object Object]"); dashboard sekarang membaca `agendaUser[user.nama]` dan menampilkan teks dan status.
 - Desain halaman `agenda` diperbarui: input lebih modern, list item hover effect, responsive font sizes.
-- Login: jika belum ada akun tersimpan, aplikasi kini menanyakan dan dapat otomatis membuat akun lokal dari NIM/password yang dimasukkan (memudahkan akses tanpa registrasi terpisah).
 - Dashboard: gabungkan reminder tersimpan dan reminder pintar (kelas yang akan datang dalam 30 menit).
 
 ## Perbaikan Bug
@@ -53,3 +47,21 @@
 2. Lengkapi kalender dengan navigasi bulan (prev/next) dan kemampuan menambah event langsung dari tanggal.
 3. Ganti demo "Lupa Password" dengan alur reset aman (server-side) jika aplikasi akan dipakai nyata.
 4. QA sweep: cari referensi kunci penyimpanan lama (`jadwal`, `reminder`) dan samakan ke model per-user.
+
+---
+
+## Latest Changes
+
+- Notifications: ditambahkan toggle `Aktifkan Notifikasi Pengingat` di dashboard, service worker `sw.js`, dan logika penjadwalan notifikasi lokal 30 menit sebelum `jamMulai`. Pengaturan notifikasi disimpan per-user (`notif_<user.nama>`).
+- Agenda: perbaikan render di dashboard (sebelumnya menampilkan "[object Object]") dan desain ulang halaman `agenda` (input lebih modern, hover effect, responsive).
+- Jadwal: perbaikan render agar item ditempatkan di dalam slot (tidak saling menimpa) dengan `.class-item` agar banyak kelas di slot yang sama terlihat dan dapat diedit/dihapus.
+- Waktu: input `jamMulai`/`jamSelesai` sekarang menggunakan `input type="time"`, mendukung format 24-jam, AM/PM otomatis dinormalisasi, dan validasi `jamSelesai > jamMulai`.
+- Auth: fitur login sekarang dapat otomatis membuat akun lokal jika belum ada user disimpan (konfirmasi pengguna), sehingga tidak perlu registrasi manual pada akses pertama.
+- Dashboard: perbaikan rendering `greeting` (hindari menampilkan object), penambahan `refreshData()` dan listener `storage` untuk sinkronisasi antar-tab, perbaikan redirect logout ke `index.html`.
+- Bug fixes: syntax errors di `dashboard.js` diperbaiki, navbar clickability diperkuat, penggantian redirect `rgl.html` → `index.html` selesai.
+
+## Catatan Teknis & Batasan
+
+- Notifikasi saat ini dijadwalkan lokal (setTimeout) dan akan bekerja selama webview/browser aktif. Untuk notifikasi yang andal di background pada Android (setelah aplikasi dimatikan), integrasi push (FCM) atau native scheduled notifications melalui median.co wrapper diperlukan.
+
+---

@@ -111,6 +111,22 @@ body {
   border-radius: 10px;
 }
 
+/* stacked item inside slot */
+.slot .class-item {
+  border-radius: 8px;
+  padding: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  box-shadow: 0 6px 14px rgba(2, 6, 23, 0.4);
+}
+.slot .class-item button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
 /* CLASS CARD */
 
 .class {
