@@ -1,8 +1,8 @@
-/* Jadwal per-user with start/end times, calendar tab and CRUD */
+/* Jadwal per-user with start/end times, calendar tab and CRUD (assets copy) */
 const grid = document.getElementById("grid");
 
 const user = JSON.parse(localStorage.getItem("user"));
-if (!user) window.location.href = "index.html";
+if (!user) window.location.href = "../index.html";
 
 let semuaJadwal = JSON.parse(localStorage.getItem("jadwalUser")) || {};
 let jadwal = semuaJadwal[user.nama] || [];
@@ -13,7 +13,6 @@ const times = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
 function timeToMinutes(t) {
   if (!t) return 0;
-  // expect HH:MM 24-hour
   const parts = t.split(":");
   const h = parseInt(parts[0], 10) || 0;
   const m = parseInt(parts[1], 10) || 0;
@@ -22,14 +21,12 @@ function timeToMinutes(t) {
 
 function normalizeTime(t) {
   if (!t) return "";
-  // convert AM/PM to 24-hour if present
   const low = String(t).trim().toLowerCase();
   const ampmMatch = low.match(/(am|pm)$/);
   if (ampmMatch) {
     const conv = parseAMPMto24(low);
     if (conv) return conv;
   }
-  // ensure HH:MM two digits
   const p = t.split(":");
   if (p.length < 2) return t;
   const hh = String(Number(p[0])).padStart(2, "0");
@@ -39,7 +36,6 @@ function normalizeTime(t) {
 
 function parseAMPMto24(s) {
   if (!s) return null;
-  // accept formats like "1:30 pm", "01:30PM", "1 pm"
   const cleaned = s.replace(/\./g, "").trim().toLowerCase();
   const m = cleaned.match(/^(\d{1,2})(?::(\d{1,2}))?\s*(am|pm)$/);
   if (!m) return null;
@@ -59,7 +55,6 @@ function saveJadwal() {
 function renderGrid() {
   grid.innerHTML = "";
 
-  // header days
   days.forEach((d) => {
     const div = document.createElement("div");
     div.className = "day";
@@ -67,8 +62,6 @@ function renderGrid() {
     grid.appendChild(div);
   });
 
-  // time rows
-  // compute grid rows based on times array
   times.forEach((time, i) => {
     const timeDiv = document.createElement("div");
     timeDiv.className = "time";
@@ -85,7 +78,6 @@ function renderGrid() {
       slot.dataset.row = i;
       slot.style.gridColumn = d + 1;
       slot.style.gridRow = i + 2;
-      // ensure slot can contain stacked items
       slot.style.display = "flex";
       slot.style.flexDirection = "column";
       slot.style.gap = "6px";
@@ -94,7 +86,6 @@ function renderGrid() {
     }
   });
 
-  // render jadwal items (safe DOM, no innerHTML with user data)
   jadwal.forEach((j, index) => {
     const dayKey = Number(j.hari);
     const startIdx = Math.max(0, times.indexOf(j.jamMulai));
@@ -118,7 +109,6 @@ function renderGrid() {
     controls.style.gap = "6px";
     controls.style.alignItems = "center";
 
-    // reminder checkbox
     const label = document.createElement("label");
     label.style.display = "flex";
     label.style.alignItems = "center";
@@ -196,7 +186,6 @@ function renderGrid() {
   });
 }
 
-// MODAL
 function openModal() {
   document.getElementById("modal").style.display = "flex";
 }
@@ -215,7 +204,6 @@ function clearModal() {
   editIndex = null;
 }
 
-// TAMBAH
 function tambahJadwal() {
   const matkul = document.getElementById("matkul").value.trim();
   const hari = document.getElementById("hari").value;
@@ -223,7 +211,6 @@ function tambahJadwal() {
   let jamSelesai = document.getElementById("jamSelesai").value;
   jamMulai = normalizeTime(jamMulai);
   jamSelesai = normalizeTime(jamSelesai);
-  // validation: harus format 24h dan selesai > mulai
   if (timeToMinutes(jamSelesai) <= timeToMinutes(jamMulai)) {
     if (typeof toast === "function")
       toast(
@@ -255,7 +242,6 @@ function tambahJadwal() {
   renderGrid();
 }
 
-// HAPUS
 function hapusJadwal(index) {
   if (!confirm("Hapus jadwal ini?")) return;
   jadwal.splice(index, 1);
@@ -275,7 +261,6 @@ function editJadwal(index) {
   openModal();
 }
 
-// TAB: switch between grid and calendar
 document.addEventListener("DOMContentLoaded", function () {
   const tabs = document.querySelectorAll(".tabs button");
   tabs.forEach((b, i) => {
@@ -283,12 +268,10 @@ document.addEventListener("DOMContentLoaded", function () {
       tabs.forEach((t) => t.classList.remove("active"));
       b.classList.add("active");
       if (i === 0) {
-        // Minggu Ini
         grid.style.display = "grid";
         const cal = document.getElementById("calendar");
         if (cal) cal.remove();
       } else {
-        // Kalender
         grid.style.display = "none";
         renderCalendar();
       }
@@ -302,13 +285,12 @@ function renderCalendar() {
   cal = document.createElement("div");
   cal.id = "calendar";
   cal.style.marginTop = "12px";
-  // simple month grid
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
   const first = new Date(year, month, 1);
   const last = new Date(year, month + 1, 0);
-  const startDay = first.getDay(); // 0 sun
+  const startDay = first.getDay();
   const daysInMonth = last.getDate();
   const table = document.createElement("div");
   table.style.display = "grid";
@@ -338,8 +320,7 @@ function renderCalendar() {
     dayNum.style.color = "#cfe6ff";
     dayNum.innerText = d;
     cell.appendChild(dayNum);
-    // show classes that fall on this weekday
-    const weekday = new Date(year, month, d).getDay(); // 0..6
+    const weekday = new Date(year, month, d).getDay();
     const weekdayName = [
       "Minggu",
       "Senin",
@@ -360,7 +341,6 @@ function renderCalendar() {
       it.style.marginTop = "6px";
       it.innerText = `${m.matkul} ${m.jamMulai || ""}`;
       cell.appendChild(it);
-      // add small controls: reminder checkbox + edit/delete for calendar view
       const controls = document.createElement("div");
       controls.style.display = "flex";
       controls.style.gap = "6px";
@@ -425,10 +405,8 @@ function renderCalendar() {
       controls.appendChild(btns);
       cell.appendChild(controls);
     });
-    // append this day cell to the month table
     table.appendChild(cell);
   }
-  // append the generated table to calendar container and add to DOM
   cal.appendChild(table);
   document.querySelector(".app").appendChild(cal);
 }
@@ -438,14 +416,12 @@ function backDashboard() {
 }
 
 function goDashboard() {
-  // wire reminder toggles
   document.querySelectorAll(".reminder-toggle").forEach((cb) => {
     cb.addEventListener("change", (ev) => {
       const idx = Number(cb.dataset.idx);
       jadwal[idx].reminderEnabled = cb.checked;
       saveJadwal();
       toast("Pengaturan reminder disimpan", "success");
-      // update dashboard reminders
       try {
         window.dispatchEvent(new Event("storage"));
       } catch (e) {}
@@ -465,10 +441,8 @@ function goRekap() {
 function goAgenda() {
   window.location.href = "agenda.html";
 }
-// INIT
 renderGrid();
 
-// Floating navbar: hide on scroll down, show on scroll up
 (function setupFloatingNavbar() {
   const navbar = document.querySelector(".navbar");
   if (!navbar) return;

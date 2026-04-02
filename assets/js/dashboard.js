@@ -5,7 +5,7 @@ const isLogin = localStorage.getItem("isLogin");
 
 if (!isLogin) {
   if (typeof toast === "function") toast("Harus login dulu!", "error");
-  window.location.href = "index.html";
+  window.location.href = "../index.html";
 }
 
 // =========================
@@ -14,7 +14,7 @@ if (!isLogin) {
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
-  window.location.href = "index.html";
+  window.location.href = "../index.html";
 }
 
 // =========================
@@ -29,7 +29,6 @@ try {
         : "Mahasiswa";
   const greetingEl = document.getElementById("greeting");
   if (greetingEl) greetingEl.innerText = `Halo, ${name}`;
-  // avatar initial
   try {
     const av = document.querySelector(".avatar");
     if (av) av.innerText = String(name).trim().charAt(0).toUpperCase();
@@ -54,11 +53,9 @@ document.getElementById("date").innerText = today.toLocaleDateString("id-ID", {
 // 📊 AMBIL JADWAL DARI STORAGE (MULTI USER) + RENDER
 // =========================
 function refreshData() {
-  // jadwal per-user
   let semuaJadwal = JSON.parse(localStorage.getItem("jadwalUser")) || {};
   let jadwalUser = semuaJadwal[user.nama] || [];
 
-  // FILTER JADWAL HARI INI
   const hariMap = {
     Minggu: 0,
     Senin: 1,
@@ -73,7 +70,6 @@ function refreshData() {
   const hariIndex = hariMap[hariSekarang];
 
   const jadwalHariIni = jadwalUser.filter((j) => {
-    // accept number, numeric string, or weekday name
     if (typeof j.hari === "number") return j.hari === hariIndex;
     if (typeof j.hari === "string") {
       if (!isNaN(Number(j.hari))) return Number(j.hari) === hariIndex;
@@ -82,7 +78,6 @@ function refreshData() {
     return false;
   });
 
-  // render jadwal
   const jadwalList = document.getElementById("jadwalList");
   if (jadwalList) {
     jadwalList.innerHTML = "";
@@ -107,12 +102,10 @@ function refreshData() {
     }
   }
 
-  // update counts in header stats
   const todayCountEl = document.getElementById("todayCount");
   if (todayCountEl)
     todayCountEl.innerText = (jadwalHariIni && jadwalHariIni.length) || 0;
 
-  // AGENDA per-user (avoid demo defaults)
   const semuaAgenda = JSON.parse(localStorage.getItem("agendaUser")) || {};
   const agenda = semuaAgenda[user.nama] || [];
   const agendaList = document.getElementById("agendaList");
@@ -145,12 +138,10 @@ function refreshData() {
   const agendaCount = document.getElementById("agendaCount");
   if (agendaCount) agendaCount.innerText = agenda.length;
 
-  // REMINDER per-user: derive from jadwal items with reminderEnabled
   const reminderList = document.getElementById("reminderList");
   const activeReminders = (jadwalUser || [])
     .filter((j) => j && j.reminderEnabled)
     .filter((j) => {
-      // limit to today's reminders
       if (typeof j.hari === "number") return j.hari === hariIndex;
       if (!isNaN(Number(j.hari))) return Number(j.hari) === hariIndex;
       return hariMap[j.hari] === hariIndex;
@@ -188,9 +179,6 @@ function refreshData() {
   if (reminderCount) reminderCount.innerText = activeReminders.length;
 }
 
-// =========================
-// ⏰ FORMAT JAM
-// =========================
 function getJam(jam) {
   const map = {
     1: "08:00",
@@ -201,12 +189,9 @@ function getJam(jam) {
   return map[jam];
 }
 
-// initial render (refreshData handles agenda & reminders per-user)
 refreshData();
-// refresh every 5s to catch cross-tab changes if storage event not fired
 setInterval(refreshData, 5000);
 
-// small live clock update under date
 function updateClock() {
   const now = new Date();
   const time = now.toLocaleTimeString("id-ID", {
@@ -221,9 +206,7 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 30_000);
 
-// =========================
-// 🚀 NAVIGASI
-// =========================
+// NAV
 function goDashboard() {
   window.location.href = "dashboard.html";
 }
@@ -240,19 +223,14 @@ function goAgenda() {
   window.location.href = "agenda.html";
 }
 
-// =========================
-// 🚪 LOGOUT
-// =========================
+// LOGOUT
 function logout() {
   localStorage.removeItem("isLogin");
   localStorage.removeItem("user");
   if (typeof toast === "function") toast("Logout berhasil", "success");
-  window.location.href = "index.html";
+  window.location.href = "../index.html";
 }
 
-// =========================
-// 🎯 NAVBAR ACTIVE EFFECT
-// =========================
 document.addEventListener("DOMContentLoaded", function () {
   const navItems = document.querySelectorAll(".nav-item");
 
@@ -264,9 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// =========================
-// Floating navbar: hide on scroll down, show on scroll up
-// =========================
 (function setupFloatingNavbar() {
   const navbar = document.querySelector(".navbar");
   if (!navbar) return;
@@ -287,7 +262,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 })();
 
-// storage sync (fires on other tabs) - refresh when data changes
 window.addEventListener("storage", function (e) {
   if (!e.key) return;
   if (

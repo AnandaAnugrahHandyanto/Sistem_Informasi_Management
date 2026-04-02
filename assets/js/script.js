@@ -1,34 +1,23 @@
-// Toggle password
-function togglePassword() {
-  const password = document.getElementById("password");
-  if (password.type === "password") {
-    password.type = "text";
-  } else {
-    password.type = "password";
-  }
-}
+// togglePassword moved to assets/js/common.js
 
 // Login form
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  // ambil input dari user
   const nim = document.getElementById("nim").value;
   const password = document.getElementById("password").value;
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
-  // validasi login
   if (storedUser) {
     if (nim === storedUser.nim && password === storedUser.password) {
       localStorage.setItem("isLogin", "true");
       toast("Login berhasil!", "success");
-      window.location.href = "dashboard.html";
+      window.location.href = "pages/dashboard.html";
     } else {
       toast("NIM atau Password salah!", "error");
     }
   } else {
-    // jika belum ada user tersimpan, tawarkan membuat akun otomatis
     const create = confirm(
       "Akun tidak ditemukan. Buat akun baru dengan NIM ini dan password yang dimasukkan?",
     );
@@ -37,11 +26,11 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem("user", JSON.stringify(newUser));
     localStorage.setItem("isLogin", "true");
     toast("Akun dibuat dan login berhasil!", "success");
-    window.location.href = "dashboard.html";
+    window.location.href = "pages/dashboard.html";
   }
 });
 
-// Lupa password (simple flow: ask nim/email and show reset info)
+// Lupa password (simple flow)
 document.addEventListener("DOMContentLoaded", function () {
   const forgot = document.querySelector(".forgot a");
   if (!forgot) return;

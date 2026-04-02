@@ -1,12 +1,4 @@
-// Toggle password
-function togglePassword() {
-  const password = document.getElementById("password");
-  if (password.type === "password") {
-    password.type = "text";
-  } else {
-    password.type = "password";
-  }
-}
+// togglePassword moved to assets/js/common.js
 
 // Register logic
 document
@@ -24,7 +16,6 @@ document
       return;
     }
 
-    // Simpan ke localStorage
     const user = {
       nama,
       nim,
@@ -36,6 +27,6 @@ document
 
     toast("Registrasi berhasil!", "success");
 
-    // Redirect ke login
-    window.location.href = "index.html";
+    // Redirect ke login (root)
+    window.location.href = "../index.html";
   });

@@ -60,6 +60,21 @@
 - Dashboard: perbaikan rendering `greeting` (hindari menampilkan object), penambahan `refreshData()` dan listener `storage` untuk sinkronisasi antar-tab, perbaikan redirect logout ke `index.html`.
 - Bug fixes: syntax errors di `dashboard.js` diperbaiki, navbar clickability diperkuat, penggantian redirect `rgl.html` → `index.html` selesai.
 
+## Refactor: Struktur & Clean-up (2026-04-02)
+
+- Memindahkan aset ke struktur folder yang lebih terorganisir:
+  - CSS -> `assets/css/`
+  - JS -> `assets/js/`
+  - Halaman non-root -> `pages/` (mis. `pages/dashboard.html`, `pages/jadwal.html`, `pages/register.html`, `pages/rekap.html`, dst.)
+- Memperbarui semua path `href`/`src` agar menunjuk ke lokasi baru tanpa mengubah perilaku fitur.
+- Konsolidasi fungsi bersama: `togglePassword()` dipindahkan ke `assets/js/common.js`.
+- Menghapus file duplikat di root, menjaga satu sumber kebenaran di `/assets` dan `/pages`.
+- Menjaga kompatibilitas: redirect dan navigasi diperbarui (mis. login -> `pages/dashboard.html`, cek login mengarah ke `../index.html` dari halaman di `pages/`).
+- Perbaikan kecil clean-code: menghilangkan fungsi ganda, menyederhanakan beberapa helper, dan merapikan includes script.
+- Tidak menambahkan fitur baru; hanya refactor, perbaikan responsive ringan, dan perapihan kode.
+
+Catatan: Silakan jalankan QA manual untuk memastikan semua rute menyala pada environment lokal (buka `index.html` di browser). Jika ingin, saya dapat membuat commit git dari perubahan ini sekarang.
+
 ## Catatan Teknis & Batasan
 
 - Notifikasi saat ini dijadwalkan lokal (setTimeout) dan akan bekerja selama webview/browser aktif. Untuk notifikasi yang andal di background pada Android (setelah aplikasi dimatikan), integrasi push (FCM) atau native scheduled notifications melalui median.co wrapper diperlukan.
