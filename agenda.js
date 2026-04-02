@@ -19,17 +19,38 @@ function renderAgenda() {
   agenda.forEach((a, i) => {
     const li = document.createElement("li");
 
-    li.innerHTML = `
-            <div class="agenda-left">
-                <div class="checkbox ${a.done ? "checked" : ""}" onclick="toggleDone(${i})"></div>
-                <span class="agenda-text ${a.done ? "done" : ""}">${a.text}</span>
-            </div>
-            <div class="action-btn">
-                <button onclick="editAgenda(${i})">✏️</button>
-                <button onclick="hapusAgenda(${i})">❌</button>
-            </div>
-        `;
+    const left = document.createElement("div");
+    left.className = "agenda-left";
+    const box = document.createElement("div");
+    box.className = "checkbox " + (a.done ? "checked" : "");
+    box.addEventListener("click", () => toggleDone(i));
+    const span = document.createElement("span");
+    span.className = "agenda-text " + (a.done ? "done" : "");
+    span.textContent = a.text;
+    left.appendChild(box);
+    left.appendChild(span);
 
+    const actions = document.createElement("div");
+    actions.className = "action-btn";
+    const editBtn = document.createElement("button");
+    const editSpan = document.createElement("span");
+    editSpan.className = "material-symbols-outlined";
+    editSpan.style.fontSize = "16px";
+    editSpan.innerText = "edit";
+    editBtn.appendChild(editSpan);
+    editBtn.addEventListener("click", () => editAgenda(i));
+    const delBtn = document.createElement("button");
+    const delSpan = document.createElement("span");
+    delSpan.className = "material-symbols-outlined";
+    delSpan.style.fontSize = "16px";
+    delSpan.innerText = "delete";
+    delBtn.appendChild(delSpan);
+    delBtn.addEventListener("click", () => hapusAgenda(i));
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    li.appendChild(left);
+    li.appendChild(actions);
     list.appendChild(li);
   });
 }
@@ -54,6 +75,7 @@ function tambahAgenda() {
   save();
   input.value = "";
   renderAgenda();
+  toast("Agenda ditambahkan", "success");
 }
 
 // TOGGLE CHECK

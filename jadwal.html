@@ -8,6 +8,10 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="jadwal.css" />
   </head>
 
@@ -17,7 +21,12 @@
       <div class="header">
         <h2>Jadwal Kuliah</h2>
         <button onclick="backDashboard()" class="dashboard-btn">
-          ⬅️ Kembali ke Dashboard
+          <span
+            class="material-symbols-outlined"
+            style="font-size: 18px; margin-right: 8px; vertical-align: middle"
+            >arrow_left</span
+          >
+          Kembali ke Dashboard
         </button>
       </div>
 
@@ -81,6 +90,7 @@
       </div>
     </div>
 
+    <script src="toast.js"></script>
     <script src="jadwal.js"></script>
   </body>
 </html>

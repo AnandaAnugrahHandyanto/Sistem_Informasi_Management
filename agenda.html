@@ -1,53 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Agenda</title>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="agenda.css">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="agenda.css" />
+  </head>
 
-<body>
-
+  <body>
     <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <h2>Agenda</h2>
+        <p>Kelola tugas harian lu</p>
+      </div>
 
-        <!-- HEADER -->
-        <div class="header">
-            <h2>Agenda</h2>
-            <p>Kelola tugas harian lu</p>
-        </div>
+      <!-- INPUT -->
+      <div class="card input-card">
+        <input type="text" id="inputAgenda" placeholder="Tambah agenda..." />
+        <button onclick="tambahAgenda()">+</button>
+      </div>
 
-        <!-- INPUT -->
-        <div class="card input-card">
-            <input type="text" id="inputAgenda" placeholder="Tambah agenda...">
-            <button onclick="tambahAgenda()">+</button>
-        </div>
-
-        <!-- LIST -->
-        <div class="card">
-            <ul id="listAgenda"></ul>
-        </div>
-
+      <!-- LIST -->
+      <div class="card">
+        <ul id="listAgenda"></ul>
+      </div>
     </div>
 
     <!-- NAVBAR -->
     <div class="navbar">
-        <div class="nav-item active" onclick="goDashboard()">
-            <i class='bx bx-home'></i>
-        </div>
-        <div class="nav-item" onclick="goJadwal()">
-            <i class='bx bx-book'></i>
-        </div>
-        <div class="nav-item" onclick="goRekap()">
-            <i class='bx bx-bar-chart'></i>
-        </div>
-        <div class="nav-item" onclick="goAgenda()">
-            <i class='bx bx-task'></i>
-        </div>
+      <div class="nav-item active" onclick="goDashboard()">
+        <i class="bx bx-home"></i>
+      </div>
+      <div class="nav-item" onclick="goJadwal()">
+        <i class="bx bx-book"></i>
+      </div>
+      <div class="nav-item" onclick="goRekap()">
+        <i class="bx bx-bar-chart"></i>
+      </div>
+      <div class="nav-item" onclick="goAgenda()">
+        <i class="bx bx-task"></i>
+      </div>
     </div>
 
+    <script src="toast.js"></script>
     <script src="agenda.js"></script>
-</body>
-
+  </body>
 </html>

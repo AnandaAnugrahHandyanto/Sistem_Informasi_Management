@@ -1,57 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Mahasiswa</title>
-    <link rel="stylesheet" href="style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="toast.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
-
+  <body>
     <div class="container">
-        <div class="card">
-
-            <!-- Gambar -->
-            <div class="image">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" alt="foto">
-            </div>
-
-            <h2>Selamat Datang!</h2>
-            <p>Silakan login untuk melanjutkan.</p>
-
-            <!-- FORM -->
-            <form id="loginForm">
-                <div class="input-box">
-                    <i class='bx bx-id-card'></i>
-                    <input type="text" id="nim" placeholder="NIM" required>
-                </div>
-
-                <div class="input-box">
-                    <i class='bx bx-lock-alt'></i>
-                    <input type="password" id="password" placeholder="Password" required>
-                    <span class="toggle-password" onclick="togglePassword()">
-                    <i class='bx bx-hide'></i>
-                </span>
-                </div>
-
-                <div class="forgot">
-                    <a href="#">Lupa Password?</a>
-                </div>
-
-                <button type="submit" class="btn">Login</button>
-            </form>
-
-            <p class="help">
-                Belum punya akun? <a href="register.html">Daftar</a>
-            </p>
-
+      <div class="card">
+        <!-- Gambar -->
+        <div class="image">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
+            alt="foto"
+          />
         </div>
+
+        <h2>Selamat Datang!</h2>
+        <p>Silakan login untuk melanjutkan.</p>
+
+        <!-- FORM -->
+        <form id="loginForm">
+          <div class="input-box">
+            <i class="bx bx-id-card"></i>
+            <input type="text" id="nim" placeholder="NIM" required />
+          </div>
+
+          <div class="input-box">
+            <i class="bx bx-lock-alt"></i>
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+            <span class="toggle-password" onclick="togglePassword()">
+              <i class="bx bx-hide"></i>
+            </span>
+          </div>
+
+          <div class="forgot">
+            <a href="#">Lupa Password?</a>
+          </div>
+
+          <button type="submit" class="btn">Login</button>
+        </form>
+
+        <p class="help">Belum punya akun? <a href="register.html">Daftar</a></p>
+      </div>
     </div>
-
-</body>
-<script src="script.js"></script>
-
+  </body>
+  <script src="toast.js"></script>
+  <script src="script.js"></script>
 </html>

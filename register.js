@@ -34,7 +34,7 @@ document
 
     localStorage.setItem("user", JSON.stringify(user));
 
-    alert("Registrasi berhasil!");
+    toast("Registrasi berhasil!", "success");
 
     // Redirect ke login
     window.location.href = "index.html";

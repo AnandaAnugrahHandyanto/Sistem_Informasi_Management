@@ -22,21 +22,21 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   if (storedUser) {
     if (nim === storedUser.nim && password === storedUser.password) {
       localStorage.setItem("isLogin", "true");
-      alert("Login berhasil!");
+      toast("Login berhasil!", "success");
       window.location.href = "dashboard.html";
     } else {
-      alert("NIM atau Password salah!");
+      toast("NIM atau Password salah!", "error");
     }
   } else {
     // jika belum ada user tersimpan, tawarkan membuat akun otomatis
     const create = confirm(
       "Akun tidak ditemukan. Buat akun baru dengan NIM ini dan password yang dimasukkan?",
     );
-    if (!create) return alert("Login dibatalkan.");
+    if (!create) return toast("Login dibatalkan.", "error");
     const newUser = { nama: "Mahasiswa", nim, email: "", password };
     localStorage.setItem("user", JSON.stringify(newUser));
     localStorage.setItem("isLogin", "true");
-    alert("Akun dibuat dan login berhasil!");
+    toast("Akun dibuat dan login berhasil!", "success");
     window.location.href = "dashboard.html";
   }
 });

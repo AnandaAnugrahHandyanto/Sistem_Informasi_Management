@@ -94,52 +94,104 @@ function renderGrid() {
     }
   });
 
-  // render jadwal items
+  // render jadwal items (safe DOM, no innerHTML with user data)
   jadwal.forEach((j, index) => {
-    const div = document.createElement("div");
-    div.className = "class " + (j.warna || "blue");
-
-    // place at column = hari+1; row - find row index of jamMulai in times
-    const col = Number(j.hari) + 1;
-    const row = Math.max(2, times.indexOf(j.jamMulai) + 2);
-    div.style.gridColumn = col;
-    div.style.gridRow = row;
-
-    div.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:700">${j.matkul}</div>
-        <div style="display:flex;gap:6px">
-          <button onclick="editJadwal(${index})">✏️</button>
-          <button onclick="hapusJadwal(${index})">✕</button>
-        </div>
-      </div>
-      <div style="margin-top:6px;font-size:12px">${j.jamMulai} - ${j.jamSelesai}</div>
-    `;
-
-    // render jadwal items inside corresponding slots to avoid overlap
     const dayKey = Number(j.hari);
     const startIdx = Math.max(0, times.indexOf(j.jamMulai));
     const slotId = `slot-d${dayKey}-r${startIdx}`;
     const slot = document.getElementById(slotId);
+
     const item = document.createElement("div");
     item.className = "class-item " + (j.warna || "blue");
-    item.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:700">${j.matkul}</div>
-        <div style="display:flex;gap:6px">
-          <button onclick="editJadwal(${index})">✏️</button>
-          <button onclick="hapusJadwal(${index})">✕</button>
-        </div>
-      </div>
-      <div style="margin-top:6px;font-size:12px">${j.jamMulai} - ${j.jamSelesai}</div>
-    `;
+
+    const header = document.createElement("div");
+    header.style.display = "flex";
+    header.style.justifyContent = "space-between";
+    header.style.alignItems = "center";
+
+    const title = document.createElement("div");
+    title.style.fontWeight = "700";
+    title.textContent = j.matkul || j.mata_kuliah || "";
+
+    const controls = document.createElement("div");
+    controls.style.display = "flex";
+    controls.style.gap = "6px";
+    controls.style.alignItems = "center";
+
+    // reminder checkbox
+    const label = document.createElement("label");
+    label.style.display = "flex";
+    label.style.alignItems = "center";
+    label.style.gap = "6px";
+    label.style.fontSize = "12px";
+    label.style.color = "#dbefff";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.dataset.idx = index;
+    cb.className = "reminder-toggle";
+    cb.style.width = "14px";
+    cb.style.height = "14px";
+    if (j.reminderEnabled) cb.checked = true;
+    cb.addEventListener("change", () => {
+      jadwal[index].reminderEnabled = cb.checked;
+      saveJadwal();
+      try {
+        window.dispatchEvent(new Event("storage"));
+      } catch (e) {}
+      if (typeof toast === "function")
+        toast("Pengaturan reminder disimpan", "success");
+    });
+
+    const cbText = document.createElement("span");
+    cbText.innerText = "Reminder";
+    cbText.style.fontSize = "12px";
+
+    label.appendChild(cb);
+    label.appendChild(cbText);
+
+    const btns = document.createElement("div");
+    btns.style.display = "flex";
+    btns.style.gap = "6px";
+
+    const editBtn = document.createElement("button");
+    const editSpan = document.createElement("span");
+    editSpan.className = "material-symbols-outlined";
+    editSpan.style.fontSize = "16px";
+    editSpan.innerText = "edit";
+    editBtn.appendChild(editSpan);
+    editBtn.addEventListener("click", () => editJadwal(index));
+    const delBtn = document.createElement("button");
+    const delSpan = document.createElement("span");
+    delSpan.className = "material-symbols-outlined";
+    delSpan.style.fontSize = "16px";
+    delSpan.innerText = "delete";
+    delBtn.appendChild(delSpan);
+    delBtn.addEventListener("click", () => hapusJadwal(index));
+
+    btns.appendChild(editBtn);
+    btns.appendChild(delBtn);
+
+    controls.appendChild(label);
+    controls.appendChild(btns);
+
+    header.appendChild(title);
+    header.appendChild(controls);
+
+    const timeDiv = document.createElement("div");
+    timeDiv.style.marginTop = "6px";
+    timeDiv.style.fontSize = "12px";
+    timeDiv.textContent = `${j.jamMulai || ""} - ${j.jamSelesai || ""}`;
+
+    item.appendChild(header);
+    item.appendChild(timeDiv);
+
     if (slot) slot.appendChild(item);
     else {
-      // fallback: append to grid if slot missing
-      const div = document.createElement("div");
-      div.className = "class " + (j.warna || "blue");
-      div.innerText = j.matkul;
-      grid.appendChild(div);
+      const fallback = document.createElement("div");
+      fallback.className = "class " + (j.warna || "blue");
+      fallback.textContent = j.matkul || j.mata_kuliah || "";
+      grid.appendChild(fallback);
     }
   });
 }
@@ -173,12 +225,18 @@ function tambahJadwal() {
   jamSelesai = normalizeTime(jamSelesai);
   // validation: harus format 24h dan selesai > mulai
   if (timeToMinutes(jamSelesai) <= timeToMinutes(jamMulai)) {
-    return alert(
-      "Waktu selesai harus lebih besar dari waktu mulai (format 24-jam).",
-    );
+    if (typeof toast === "function")
+      toast(
+        "Waktu selesai harus lebih besar dari waktu mulai (format 24-jam).",
+        "error",
+      );
+    return;
   }
   const warna = document.getElementById("warna").value;
-  if (!matkul) return alert("Isi mata kuliah!");
+  if (!matkul) {
+    if (typeof toast === "function") toast("Isi mata kuliah!", "error");
+    return;
+  }
 
   const item = {
     mata_kuliah: matkul,
@@ -203,6 +261,7 @@ function hapusJadwal(index) {
   jadwal.splice(index, 1);
   saveJadwal();
   renderGrid();
+  if (typeof toast === "function") toast("Jadwal dihapus", "success");
 }
 
 function editJadwal(index) {
@@ -301,9 +360,75 @@ function renderCalendar() {
       it.style.marginTop = "6px";
       it.innerText = `${m.matkul} ${m.jamMulai || ""}`;
       cell.appendChild(it);
+      // add small controls: reminder checkbox + edit/delete for calendar view
+      const controls = document.createElement("div");
+      controls.style.display = "flex";
+      controls.style.gap = "6px";
+      controls.style.alignItems = "center";
+      controls.style.marginTop = "6px";
+
+      const idx = jadwal.indexOf(m);
+      const label = document.createElement("label");
+      label.style.display = "flex";
+      label.style.alignItems = "center";
+      label.style.gap = "6px";
+      label.style.fontSize = "12px";
+      label.style.color = "#dbefff";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.dataset.idx = idx;
+      cb.className = "reminder-toggle";
+      cb.style.width = "14px";
+      cb.style.height = "14px";
+      if (m.reminderEnabled) cb.checked = true;
+      cb.addEventListener("change", () => {
+        if (idx >= 0) {
+          jadwal[idx].reminderEnabled = cb.checked;
+          saveJadwal();
+          try {
+            window.dispatchEvent(new Event("storage"));
+          } catch (e) {}
+        }
+      });
+
+      const span = document.createElement("span");
+      span.innerText = "Reminder";
+      span.style.fontSize = "12px";
+
+      label.appendChild(cb);
+      label.appendChild(span);
+
+      const btns = document.createElement("div");
+      btns.style.display = "flex";
+      btns.style.gap = "6px";
+
+      const editBtn = document.createElement("button");
+      const editSpan2 = document.createElement("span");
+      editSpan2.className = "material-symbols-outlined";
+      editSpan2.style.fontSize = "16px";
+      editSpan2.innerText = "edit";
+      editBtn.appendChild(editSpan2);
+      editBtn.addEventListener("click", () => editJadwal(idx));
+      const delBtn = document.createElement("button");
+      const delSpan2 = document.createElement("span");
+      delSpan2.className = "material-symbols-outlined";
+      delSpan2.style.fontSize = "16px";
+      delSpan2.innerText = "delete";
+      delBtn.appendChild(delSpan2);
+      delBtn.addEventListener("click", () => hapusJadwal(idx));
+
+      btns.appendChild(editBtn);
+      btns.appendChild(delBtn);
+
+      controls.appendChild(label);
+      controls.appendChild(btns);
+      cell.appendChild(controls);
     });
+    // append this day cell to the month table
     table.appendChild(cell);
   }
+  // append the generated table to calendar container and add to DOM
   cal.appendChild(table);
   document.querySelector(".app").appendChild(cal);
 }
@@ -313,6 +438,19 @@ function backDashboard() {
 }
 
 function goDashboard() {
+  // wire reminder toggles
+  document.querySelectorAll(".reminder-toggle").forEach((cb) => {
+    cb.addEventListener("change", (ev) => {
+      const idx = Number(cb.dataset.idx);
+      jadwal[idx].reminderEnabled = cb.checked;
+      saveJadwal();
+      toast("Pengaturan reminder disimpan", "success");
+      // update dashboard reminders
+      try {
+        window.dispatchEvent(new Event("storage"));
+      } catch (e) {}
+    });
+  });
   window.location.href = "dashboard.html";
 }
 

@@ -4,7 +4,7 @@
 const isLogin = localStorage.getItem("isLogin");
 
 if (!isLogin) {
-  alert("Harus login dulu!");
+  if (typeof toast === "function") toast("Harus login dulu!", "error");
   window.location.href = "index.html";
 }
 
@@ -28,7 +28,12 @@ try {
         ? user.nim
         : "Mahasiswa";
   const greetingEl = document.getElementById("greeting");
-  if (greetingEl) greetingEl.innerText = `Halo, ${name} 👋`;
+  if (greetingEl) greetingEl.innerText = `Halo, ${name}`;
+  // avatar initial
+  try {
+    const av = document.querySelector(".avatar");
+    if (av) av.innerText = String(name).trim().charAt(0).toUpperCase();
+  } catch (e) {}
 } catch (err) {
   console.error("Greeting render error", err);
 }
@@ -124,7 +129,13 @@ function refreshData() {
         const text =
           typeof a === "string" ? a : a && a.text ? a.text : String(a);
         const done = typeof a === "object" && a && a.done ? true : false;
-        li.innerText = (done ? "✔ " : "• ") + text;
+        const icon = document.createElement("span");
+        icon.className = "material-symbols-outlined";
+        icon.style.fontSize = "14px";
+        icon.style.marginRight = "8px";
+        icon.innerText = done ? "check_circle" : "radio_button_unchecked";
+        li.appendChild(icon);
+        li.appendChild(document.createTextNode(text));
         li.classList.add("fade-in");
         li.style.animationDelay = 120 + idx * 50 + "ms";
         agendaList.appendChild(li);
@@ -134,21 +145,39 @@ function refreshData() {
   const agendaCount = document.getElementById("agendaCount");
   if (agendaCount) agendaCount.innerText = agenda.length;
 
-  // REMINDER per-user (avoid demo defaults)
-  const semuaReminder = JSON.parse(localStorage.getItem("reminderUser")) || {};
-  const reminder = semuaReminder[user.nama] || [];
+  // REMINDER per-user: derive from jadwal items with reminderEnabled
   const reminderList = document.getElementById("reminderList");
+  const activeReminders = (jadwalUser || [])
+    .filter((j) => j && j.reminderEnabled)
+    .filter((j) => {
+      // limit to today's reminders
+      if (typeof j.hari === "number") return j.hari === hariIndex;
+      if (!isNaN(Number(j.hari))) return Number(j.hari) === hariIndex;
+      return hariMap[j.hari] === hariIndex;
+    })
+    .sort((a, b) => (a.jamMulai || "").localeCompare(b.jamMulai || ""));
+
   if (reminderList) {
     reminderList.innerHTML = "";
-    if (reminder.length === 0) {
+    if (activeReminders.length === 0) {
       const p = document.createElement("p");
       p.innerText = "Tidak ada reminder";
       p.style.color = "#9fb0d8";
       reminderList.appendChild(p);
     } else {
-      reminder.forEach((r, idx) => {
+      activeReminders.forEach((r, idx) => {
         const li = document.createElement("li");
-        li.innerText = "🔔 " + r;
+        const icon = document.createElement("span");
+        icon.className = "material-symbols-outlined";
+        icon.style.fontSize = "14px";
+        icon.style.marginRight = "8px";
+        icon.innerText = "notifications";
+        li.appendChild(icon);
+        li.appendChild(
+          document.createTextNode(
+            `${r.matkul || r.mata_kuliah || "Kelas"} ${r.jamMulai || ""}`,
+          ),
+        );
         li.classList.add("fade-in");
         li.style.animationDelay = 160 + idx * 60 + "ms";
         reminderList.appendChild(li);
@@ -156,7 +185,7 @@ function refreshData() {
     }
   }
   const reminderCount = document.getElementById("reminderCount");
-  if (reminderCount) reminderCount.innerText = reminder.length;
+  if (reminderCount) reminderCount.innerText = activeReminders.length;
 }
 
 // =========================
@@ -217,7 +246,7 @@ function goAgenda() {
 function logout() {
   localStorage.removeItem("isLogin");
   localStorage.removeItem("user");
-  alert("Logout berhasil!");
+  if (typeof toast === "function") toast("Logout berhasil", "success");
   window.location.href = "index.html";
 }
 
@@ -262,139 +291,9 @@ document.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("storage", function (e) {
   if (!e.key) return;
   if (
-    [
-      "jadwalUser",
-      "agendaUser",
-      "reminderUser",
-      "user",
-      "isLogin",
-      "lastUpdate",
-    ].includes(e.key)
+    ["jadwalUser", "agendaUser", "user", "isLogin", "lastUpdate"].includes(
+      e.key,
+    )
   )
     refreshData();
-});
-
-// -----------------------------
-// Notifications: toggle, permission, schedule
-// -----------------------------
-let scheduledReminders = [];
-
-function swRegister() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
-  }
-}
-
-function isNotifEnabled() {
-  try {
-    return localStorage.getItem("notif_" + user.nama) === "true";
-  } catch (e) {
-    return false;
-  }
-}
-
-function setNotifEnabled(v) {
-  try {
-    localStorage.setItem("notif_" + user.nama, v ? "true" : "false");
-  } catch (e) {}
-  const cb = document.getElementById("notifToggle");
-  if (cb) cb.checked = !!v;
-  if (v) requestPermissionAndSchedule();
-  else clearScheduledReminders();
-}
-
-function requestPermissionAndSchedule() {
-  if (!("Notification" in window))
-    return alert("Notifikasi tidak didukung di browser ini");
-  Notification.requestPermission().then((p) => {
-    if (p === "granted") scheduleReminders();
-    else alert("Izin notifikasi ditolak.");
-  });
-}
-
-function clearScheduledReminders() {
-  scheduledReminders.forEach((id) => clearTimeout(id));
-  scheduledReminders = [];
-}
-
-function scheduleReminders() {
-  clearScheduledReminders();
-  if (!isNotifEnabled()) return;
-  // get today's jadwal and schedule notification 30 minutes before start
-  let semuaJadwal = JSON.parse(localStorage.getItem("jadwalUser")) || {};
-  let jadwalUser = semuaJadwal[user.nama] || [];
-  const now = new Date();
-  jadwalUser.forEach((j) => {
-    try {
-      // only schedule items that have jamMulai and hari matching today
-      const hariIndex = new Date().toLocaleDateString("id-ID", {
-        weekday: "long",
-      });
-      // convert j.hari to weekday name or number
-      const dayName = hariIndex;
-      // accept numeric day index stored as string or number
-      let matchesToday = false;
-      if (typeof j.hari === "number")
-        matchesToday = j.hari === new Date().getDay();
-      else if (!isNaN(Number(j.hari)))
-        matchesToday = Number(j.hari) === new Date().getDay();
-      else if (typeof j.hari === "string")
-        matchesToday = j.hari.toLowerCase() === dayName.toLowerCase();
-      if (!matchesToday) return;
-      const t = j.jamMulai || j.jam || j.jamStart;
-      if (!t) return;
-      const parts = t.split(":");
-      if (parts.length < 2) return;
-      const target = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        Number(parts[0]),
-        Number(parts[1]),
-      );
-      const notifyAt = new Date(target.getTime() - 30 * 60 * 1000); // 30 minutes before
-      const ms = notifyAt.getTime() - Date.now();
-      if (ms <= 0) return; // past
-      const id = setTimeout(() => {
-        const title = `Pengingat: ${j.matkul || j.mata_kuliah || "Kelas"}`;
-        const body = `${j.jamMulai || t} • Mulai dalam 30 menit`;
-        // try service worker showNotification
-        if (
-          navigator.serviceWorker &&
-          navigator.serviceWorker.getRegistration
-        ) {
-          navigator.serviceWorker
-            .getRegistration()
-            .then((reg) => {
-              if (reg) reg.showNotification(title, { body, tag: "reminder" });
-              else new Notification(title, { body });
-            })
-            .catch(() => {
-              try {
-                new Notification(title, { body });
-              } catch (e) {}
-            });
-        } else {
-          try {
-            new Notification(title, { body });
-          } catch (e) {}
-        }
-      }, ms);
-      scheduledReminders.push(id);
-    } catch (e) {
-      /*ignore*/
-    }
-  });
-}
-
-// wire toggle UI on load
-document.addEventListener("DOMContentLoaded", () => {
-  swRegister();
-  const cb = document.getElementById("notifToggle");
-  if (cb) {
-    cb.checked = isNotifEnabled();
-    cb.addEventListener("change", () => setNotifEnabled(cb.checked));
-  }
-  // schedule if enabled
-  if (isNotifEnabled()) requestPermissionAndSchedule();
 });

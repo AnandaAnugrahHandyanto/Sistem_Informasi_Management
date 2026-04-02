@@ -7,7 +7,9 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="toast.css" />
   </head>
 
   <body>
@@ -17,7 +19,7 @@
         <div class="header-top">
           <div class="avatar">A</div>
           <div>
-            <h2 id="greeting">Halo 👋</h2>
+            <h2 id="greeting">Halo</h2>
             <p id="date"></p>
           </div>
         </div>
@@ -34,15 +36,6 @@
             <div class="stat-value" id="reminderCount">0</div>
             <div class="stat-label">Reminder</div>
           </div>
-        </div>
-        <div
-          class="notif-control"
-          style="margin-top: 10px; display: flex; align-items: center; gap: 8px"
-        >
-          <input type="checkbox" id="notifToggle" />
-          <label for="notifToggle" style="color: #cfe6ff; font-size: 13px"
-            >Aktifkan Notifikasi Pengingat</label
-          >
         </div>
       </div>
 
@@ -81,6 +74,7 @@
       </div>
     </div>
 
+    <script src="toast.js"></script>
     <script src="dashboard.js"></script>
   </body>
 </html>

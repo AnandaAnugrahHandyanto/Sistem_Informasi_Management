@@ -119,12 +119,18 @@ body {
   font-weight: 600;
   font-size: 12px;
   box-shadow: 0 6px 14px rgba(2, 6, 23, 0.4);
+  position: relative;
+  z-index: 2;
 }
 .slot .class-item button {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
+}
+/* ensure controls inside items are clickable even if slot sizing is tight */
+.slot .class-item * {
+  pointer-events: auto;
 }
 
 /* CLASS CARD */
