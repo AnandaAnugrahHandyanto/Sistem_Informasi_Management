@@ -1,5 +1,69 @@
 # Changelog
 
+## UI/UX & Peningkatan Visual (2026-04-06)
+
+### ✨ Fitur Baru
+- 🎨 **Sistem Tema Warna Kustom**: Menambahkan 4 tema warna (Biru, Ungu, Hijau, Oranye) dengan CSS variables. Pemilih tema di halaman Pengaturan dengan penyimpanan persisten.
+- 📊 **Grafik Interaktif di Halaman Rekap**: 
+  - Grafik Batang Jadwal Mingguan (kelas per hari dalam seminggu)
+  - Grafik Donat Status Agenda (tugas selesai vs tertunda)
+  - Grafik Batang Frekuensi Kelas (5 kelas paling sering)
+  - Grafik dibuat dengan Chart.js, responsif, dan multibahasa
+- 🎬 **Animasi Halus**: Menambahkan CSS3 keyframe animations:
+  - `slideInUp` (kartu jadwal) - transisi masuk 300ms yang halus
+  - `shimmer` (loading skeletons) - efek berkilau 2 detik berulang
+  - `float` (ikon empty state) - gerakan mengapung lembut 3 detik
+  - `checkPulse` (indikator checkbox) - efek pulse 400ms
+- 📦 **UI Empty State**: Mengganti teks biasa dengan empty state bergaya yang menampilkan:
+  - Ikon animasi (📚 untuk jadwal, ✓ untuk agenda, 🔔 untuk reminder)
+  - Pesan deskriptif dengan terjemahan yang tepat
+  - Animasi floating yang halus
+  - Diterapkan ke ketiga bagian dashboard
+
+### 🐛 Perbaikan Bug
+- ✅ **Memperbaiki 11 Masalah Utama**: Terjemahan bulan/hari dalam kalender, pemetaan hari dashboard, nav pengaturan tidak highlight, tanggal hari ini tidak highlight, dark mode tidak persisten, notifikasi reminder, deteksi tumpang tindih jadwal, ukuran checkbox, visibilitas tombol edit/hapus
+- ✅ **Bug Kritis: Jadwal Berulang** - Memperbaiki jadwal yang muncul setiap hari/minggu:
+  - Mengubah struktur data dari `{hari: 1-5}` (hari dalam minggu, berulang) ke `{tanggal: "YYYY-MM-DD"}` (tanggal spesifik)
+  - Menambahkan fungsi migrasi otomatis untuk mengkonversi jadwal lama saat halaman dimuat
+  - Mencegah masalah duplikat "Jumat setiap minggu"
+- ✅ **Visibilitas Teks Empty State**: Mengubah warna dari gelap (#7080aa) ke terang (#e0e7ff) untuk keterbacaan lebih baik di dark mode
+- ✅ **Pergantian Bahasa untuk Empty States**: Menerapkan translation keys yang tepat (`noScheduleToday`, `enjoyFreeDay`, `allTasksDone`) sehingga pesan diperbarui saat mengganti bahasa
+- ✅ **Gaya Indikator Konflik**: Menambahkan perbatasan merah + badge peringatan ⚠️ untuk jadwal yang tumpang tindih
+- ✅ **Checkbox Halus**: Diperbarui menjadi 16px dengan efek glow halus saat hover, cocok di grid layout
+
+### 🎯 Peningkatan
+- 🌈 **Penerapan Tema**: Tema diterapkan secara global di semua halaman saat startup melalui `applyTheme()` yang diperbarui di `common.js`
+- 📝 **Translation Keys Ditambahkan**: `theme`, `themeDesc`, `agendaStatus`, `classFrequency`, `completed`, `pending`, `frequency` (bilingual: id/en)
+- 🎨 **Gaya Checkbox**: Kelancaran visual dengan animasi checkPulse 400ms dan efek glow biru saat hover
+- 🖱️ **Kejelasan Tombol**: Tombol Edit (ikon hitam ✎) dan Tombol Hapus (ikon merah 🗑️) untuk pengenalan visual instan
+- 📅 **Badge Tanggal Hari Ini**: Highlight biru menonjol (#3b82f6) pada tanggal saat ini dalam kalender
+- 🔄 **Transisi Halaman**: Animasi fade halus saat menavigasi antar halaman
+
+### 📁 File yang Dimodifikasi
+- `pages/settings.html` - Menambahkan dropdown pemilih warna tema di bagian Tampilan
+- `pages/rekap.html` - Menambahkan 3 elemen canvas Chart.js untuk grafik
+- `assets/js/settings.js` - Menambahkan fungsi `applyTheme()`, `loadCustomTheme()`, `changeTheme()`
+- `assets/js/common.js` - Meningkatkan `applyTheme()` untuk menerapkan dark mode dan warna tema kustom
+- `assets/js/dashboard.js` - Mengonversi teks empty menjadi div `.empty-state` bergaya dengan translation keys yang tepat
+- `assets/js/jadwal.js` - Menambahkan logika deteksi konflik ke fungsi `renderGrid()`
+- `assets/js/language.js` - Menambahkan 10+ translation keys baru untuk tema, grafik, dan empty states
+- `assets/css/jadwal.css` - Menambahkan 200+ baris animasi, theme variables, dan peningkatan visual
+- `assets/css/rekap.css` - Menambahkan gaya container grafik
+- `assets/js/rekap.js` - **FILE BARU** dengan inisialisasi Chart.js dan rendering data
+
+### 🌍 Dukungan Multibahasa
+- Semua label grafik dan pesan empty state sekarang mendukungan Indonesian (id) dan English (en) dengan baik
+- Pergantian bahasa memperbarui semua konten dinamis termasuk grafik
+- Translation keys terorganisir dengan baik di `language.js`
+
+### 📊 Peningkatan Visual
+- 🎨 Sistem CSS variable untuk dukungan tema (--primary-color, --primary-light, --primary-dark)
+- 🔵 Skema warna konsisten dengan kesadaran tema di semua komponen
+- ✨ Hierarki visual yang ditingkatkan dengan animasi dan micro-interactions
+- 📱 Animasi responsif untuk tampilan mobile dan desktop
+
+## Fitur Baru
+
 ## Fitur Baru
 
 - Redesain visual dashboard dengan tema gelap, kartu glass, dan animasi micro-interaction.
@@ -36,17 +100,24 @@
 
 ## Known Issues / Catatan
 
-- Tab Kalender di halaman `jadwal` saat ini menampilkan view bulan sederhana tanpa navigasi prev/next.
-- Dashboard belum sepenuhnya auto-refresh antar-tab; direkomendasikan menambahkan `storage` event listener agar perubahan di halaman lain langsung terlihat.
-- Fitur "Lupa Password" saat ini berupa demo client-side (menampilkan password dari localStorage) — ini tidak aman untuk lingkungan produksi.
-- Masih mungkin ada sisa referensi ke kunci lama (`jadwal`) di beberapa file; disarankan sweep konsistensi storage.
+~~Tab Kalender di halaman `jadwal` saat ini menampilkan view bulan sederhana tanpa navigasi prev/next.~~ **FIXED** (2026-04-06)
+~~Dashboard belum sepenuhnya auto-refresh antar-tab; direkomendasikan menambahkan `storage` event listener agar perubahan di halaman lain langsung terlihat.~~ **FIXED** (2026-04-06)
+~~Fitur "Lupa Password" saat ini berupa demo client-side (menampilkan password dari localStorage) — ini tidak aman untuk lingkungan produksi.~~ **FIXED** (2026-04-06)
+~~Masih mungkin ada sisa referensi ke kunci lama (`jadwal`) di beberapa file; disarankan sweep konsistensi storage.~~ **VERIFIED FIXED** (2026-04-06)
+
+## Fixes (2026-04-06)
+
+- ✅ **Calendar Navigation**: Kalender di halaman `jadwal` sekarang memiliki tombol "Bulan Sebelumnya" dan "Bulan Berikutnya" untuk navigasi antar bulan. Menampilkan bulan dan tahun saat ini di atas kalender.
+- ✅ **Dashboard Auto-Refresh**: Implementasi `window.addEventListener('storage', ...)` di `dashboard.js` untuk auto-refresh jadwal, agenda, dan reminder saat ada perubahan di tab lain. Data di-sync secara real-time antar tab.
+- ✅ **Forgot Password Security**: Ganti "Lupa Password" dari fitur demo yang menampilkan password dengan modal dialog yang aman. Modal sekarang hanya memverifikasi keberadaan akun dan mengarahkan user untuk menghubungi admin, tanpa menampilkan password di alert.
+- ✅ **Storage Key Cleanup**: Verifikasi bahwa semua referensi ke kunci storage lama (`jadwal`) sudah dipindahkan ke `jadwalUser` per-user. Tidak ada referensi lama yang ditemukan di codebase.
 
 ## Langkah Selanjutnya (Prioritas)
 
-1. Tambahkan `window.addEventListener('storage', ...)` pada `dashboard.js` untuk auto-refresh data (jadwal/agenda/reminder) ketika terjadi perubahan di tab lain.
-2. Lengkapi kalender dengan navigasi bulan (prev/next) dan kemampuan menambah event langsung dari tanggal.
-3. Ganti demo "Lupa Password" dengan alur reset aman (server-side) jika aplikasi akan dipakai nyata.
-4. QA sweep: cari referensi kunci penyimpanan lama (`jadwal`, `reminder`) dan samakan ke model per-user.
+1. (Opsional) Tambahkan server-side password reset dengan email verification untuk keamanan lebih.
+2. (Opsional) Implementasi notifikasi browser untuk reminder jadwal dan agenda.
+3. (Opsional) Tambahkan fitur export/import data untuk backup user data.
+4. QA testing: Verifikasi semua fitur berfungsi dengan baik di berbagai browser dan perangkat.
 
 ---
 

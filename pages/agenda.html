@@ -2,25 +2,32 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Agenda</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../assets/css/agenda.css" />
+    <link rel="stylesheet" href="../assets/css/toast.css" />
   </head>
 
   <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
     <div class="container">
       <!-- HEADER -->
       <div class="header">
-        <h2>Agenda</h2>
-        <p>Kelola tugas harian lu</p>
+        <h2 data-i18n="agendaTitle">Agenda</h2>
+        <p data-i18n="agendaSubtitle">Kelola tugas harian lu</p>
       </div>
 
       <!-- INPUT -->
       <div class="card input-card">
-        <input type="text" id="inputAgenda" placeholder="Tambah agenda..." />
+        <input type="text" id="inputAgenda" data-i18n-placeholder="addAgenda" placeholder="Tambah agenda..." />
         <button onclick="tambahAgenda()">+</button>
       </div>
 
@@ -32,7 +39,7 @@
 
     <!-- NAVBAR -->
     <div class="navbar">
-      <div class="nav-item active" onclick="goDashboard()">
+      <div class="nav-item" onclick="goDashboard()">
         <i class="bx bx-home"></i>
       </div>
       <div class="nav-item" onclick="goJadwal()">
@@ -44,8 +51,13 @@
       <div class="nav-item" onclick="goAgenda()">
         <i class="bx bx-task"></i>
       </div>
+      <div class="nav-item" onclick="goSettings()">
+        <i class="bx bx-cog"></i>
+      </div>
     </div>
 
+    <script src="../assets/js/language.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/agenda.js"></script>
   </body>

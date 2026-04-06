@@ -5,6 +5,33 @@
   font-family: "Poppins", sans-serif;
 }
 
+/* Page transition animations */
+body {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+body.page-exit {
+  animation: fadeOut 0.4s ease-in-out forwards;
+}
+
 body {
   background: linear-gradient(180deg, #0f172a 0%, #071028 60%);
   display: flex;

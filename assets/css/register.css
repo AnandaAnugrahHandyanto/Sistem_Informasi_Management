@@ -15,6 +15,27 @@ body {
   padding: 28px 0;
 }
 
+/* Language button */
+#langBtn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#langBtn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
 /* Container */
 
 .container {
@@ -110,11 +131,16 @@ p {
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
   color: white;
   font-size: 16px;
   cursor: pointer;
   margin-bottom: 15px;
+  transition: opacity 0.3s ease;
+}
+
+.btn:hover {
+  opacity: 0.9;
 }
 
 /* Login link */
@@ -168,4 +194,40 @@ p {
 .facebook {
   background: #3b82f6;
   color: white;
+}
+
+/* Custom theme color support */
+:root {
+  --primary-color: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #1e40af;
+  --primary-rgb: 59, 130, 246;
+}
+
+body.theme-purple {
+  --primary-color: #8b5cf6;
+  --primary-light: #a78bfa;
+  --primary-dark: #6d28d9;
+  --primary-rgb: 139, 92, 246;
+}
+
+body.theme-green {
+  --primary-color: #10b981;
+  --primary-light: #34d399;
+  --primary-dark: #059669;
+  --primary-rgb: 16, 185, 129;
+}
+
+body.theme-orange {
+  --primary-color: #f97316;
+  --primary-light: #fb923c;
+  --primary-dark: #ea580c;
+  --primary-rgb: 249, 115, 22;
+}
+
+/* Apply theme to button */
+#langBtn {
+  background: rgba(var(--primary-rgb), 0.2);
+  color: var(--primary-color);
+  border-color: rgba(var(--primary-rgb), 0.5);
 }

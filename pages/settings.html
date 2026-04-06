@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/settings.css" />
+    <link rel="stylesheet" href="../assets/css/toast.css" />
+  </head>
+
+  <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <h2 data-i18n="settings">Pengaturan</h2>
+        <p data-i18n="settingsSubtitle">Kelola preferensi aplikasi Anda</p>
+      </div>
+
+      <!-- ACCOUNT SECTION -->
+      <div class="card">
+        <div class="section-title" data-i18n="account">Akun</div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="label-text" data-i18n="studentId">NIM</span>
+            <span class="label-value" id="nimDisplay">-</span>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="label-text" data-i18n="name">Nama</span>
+            <span class="label-value" id="nameDisplay">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE SECTION -->
+      <div class="card">
+        <div class="section-title" data-i18n="appearance">Tampilan</div>
+        
+        <!-- Dark Mode Toggle -->
+        <div class="setting-item">
+          <div class="setting-label">
+            <div>
+              <span class="label-text" data-i18n="darkMode">Mode Gelap</span>
+              <span class="label-description" data-i18n="darkModeDesc">Gunakan tema gelap untuk pengalaman visual yang lebih nyaman</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Language -->
+        <div class="setting-item">
+          <div class="setting-label">
+            <div>
+              <span class="label-text" data-i18n="language">Bahasa</span>
+              <span class="label-description" id="langDisplay" data-i18n="languageDesc">Pilih bahasa aplikasi Anda</span>
+            </div>
+            <select id="languageSelect" onchange="handleLanguageChange()" class="language-select">
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Theme Color -->
+        <div class="setting-item">
+          <div class="setting-label">
+            <div>
+              <span class="label-text" data-i18n="theme">Tema Warna</span>
+              <span class="label-description" data-i18n="themeDesc">Pilih tema warna untuk aplikasi Anda</span>
+            </div>
+            <select id="themeSelect" onchange="changeTheme()" class="language-select">
+              <option value="blue">🔵 Biru (Default)</option>
+              <option value="purple">🟣 Ungu</option>
+              <option value="green">🟢 Hijau</option>
+              <option value="orange">🟠 Oranye</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS SECTION -->
+      <div class="card">
+        <div class="section-title" data-i18n="notifications">Notifikasi</div>
+        
+        <div class="setting-item">
+          <div class="setting-label">
+            <div>
+              <span class="label-text" data-i18n="scheduleNotif">Notifikasi Jadwal</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="scheduleNotif" onchange="saveSettings()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <div>
+              <span class="label-text" data-i18n="agendaNotif">Notifikasi Agenda</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="agendaNotif" onchange="saveSettings()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA SECTION -->
+      <div class="card">
+        <div class="section-title" data-i18n="data">Data</div>
+        
+        <div class="setting-item">
+          <button class="btn btn-outline" onclick="clearData()" data-i18n="clearData">Bersihkan Data Lokal</button>
+          <p class="setting-description" data-i18n="clearDataDesc">Hapus semua data lokal (jadwal, agenda, reminder)</p>
+        </div>
+      </div>
+
+      <!-- ABOUT SECTION -->
+      <div class="card">
+        <div class="section-title" data-i18n="about">Tentang</div>
+        
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="label-text" data-i18n="appVersion">Versi Aplikasi</span>
+            <span class="label-value">1.0.0</span>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="label-text" data-i18n="lastUpdate">Update Terakhir</span>
+            <span class="label-value">April 6, 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGOUT SECTION -->
+      <div class="card">
+        <button class="btn btn-danger" onclick="logout()" data-i18n="logout">Logout</button>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <div class="nav-item" onclick="navigateTo('dashboard.html')">
+        <i class="bx bx-home"></i>
+      </div>
+      <div class="nav-item" onclick="navigateTo('jadwal.html')">
+        <i class="bx bx-book"></i>
+      </div>
+      <div class="nav-item" onclick="navigateTo('rekap.html')">
+        <i class="bx bx-bar-chart"></i>
+      </div>
+      <div class="nav-item" onclick="navigateTo('agenda.html')">
+        <i class="bx bx-task"></i>
+      </div>
+      <div class="nav-item active" onclick="navigateTo('settings.html')">
+        <i class="bx bx-cog"></i>
+      </div>
+    </div>
+
+    <script src="../assets/js/language.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/toast.js"></script>
+    <script src="../assets/js/settings.js"></script>
+  </body>
+</html>

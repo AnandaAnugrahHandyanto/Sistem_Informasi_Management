@@ -8,7 +8,65 @@ let semuaJadwal = JSON.parse(localStorage.getItem("jadwalUser")) || {};
 let jadwal = semuaJadwal[user.nama] || [];
 let editIndex = null;
 
-const days = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+// ============================================
+// MIGRATION: Convert old hari format to tanggal
+// ============================================
+function migrateOldSchedules() {
+  let hasChanges = false;
+  jadwal = jadwal.map(schedule => {
+    // If schedule has old hari field but no tanggal, convert it
+    if (schedule.hari && !schedule.tanggal) {
+      const today = new Date();
+      const dayOfWeek = Number(schedule.hari);
+      
+      // Find the next occurrence of this day of week
+      const currentDay = today.getDay();
+      let daysUntilTarget = (dayOfWeek - currentDay + 7) % 7;
+      
+      // If it's today, use today. If it's in the past this week, use next week
+      if (daysUntilTarget === 0) {
+        daysUntilTarget = 0; // Use today
+      }
+      
+      const targetDate = new Date(today);
+      targetDate.setDate(today.getDate() + daysUntilTarget);
+      
+      const yyyy = targetDate.getFullYear();
+      const mm = String(targetDate.getMonth() + 1).padStart(2, "0");
+      const dd = String(targetDate.getDate()).padStart(2, "0");
+      
+      schedule.tanggal = `${yyyy}-${mm}-${dd}`;
+      delete schedule.hari; // Remove old field
+      hasChanges = true;
+    }
+    return schedule;
+  });
+  
+  // Save migrated data
+  if (hasChanges) {
+    semuaJadwal[user.nama] = jadwal;
+    localStorage.setItem("jadwalUser", JSON.stringify(semuaJadwal));
+  }
+}
+
+// Run migration on load
+migrateOldSchedules();
+
+// Calendar navigation
+let currentCalendarDate = new Date();
+
+// Get translated day names
+function getDays() {
+  return [
+    "",
+    t("monday"),
+    t("tuesday"),
+    t("wednesday"),
+    t("thursday"),
+    t("friday")
+  ];
+}
+
 const times = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
 function timeToMinutes(t) {
@@ -55,6 +113,7 @@ function saveJadwal() {
 function renderGrid() {
   grid.innerHTML = "";
 
+  const days = getDays();
   days.forEach((d) => {
     const div = document.createElement("div");
     div.className = "day";
@@ -86,103 +145,167 @@ function renderGrid() {
     }
   });
 
+  // Get current week's dates (Monday to Friday)
+  const today = new Date();
+  const currentDay = today.getDay();
+  const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Adjust for Sunday
+  const monday = new Date(today.setDate(diff));
+  
+  const weekDates = [];
+  for (let i = 1; i <= 5; i++) {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + (i - 1));
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    weekDates.push(`${yyyy}-${mm}-${dd}`);
+  }
+
+  // Display schedules for this week
   jadwal.forEach((j, index) => {
-    const dayKey = Number(j.hari);
+    const scheduleDate = j.tanggal;
+    
+    // Only show schedules with proper date format (no old hari format)
+    if (!scheduleDate) return;
+    
+    // Find which day of the week this schedule is on
+    let dayIndex = -1;
+    if (weekDates.includes(scheduleDate)) {
+      dayIndex = weekDates.indexOf(scheduleDate) + 1;
+    }
+    
+    if (dayIndex < 0) return;
+    
     const startIdx = Math.max(0, times.indexOf(j.jamMulai));
-    const slotId = `slot-d${dayKey}-r${startIdx}`;
+    const slotId = `slot-d${dayIndex}-r${startIdx}`;
     const slot = document.getElementById(slotId);
+    if (!slot) return;
 
     const item = document.createElement("div");
     item.className = "class-item " + (j.warna || "blue");
-
-    const header = document.createElement("div");
-    header.style.display = "flex";
-    header.style.justifyContent = "space-between";
-    header.style.alignItems = "center";
+    
+    // Check for schedule conflicts - add visual indicator
+    const hasConflict = jadwal.some((other, idx) => {
+      if (idx === index) return false;
+      if (other.tanggal !== j.tanggal) return false;
+      const otherStart = timeToMinutes(other.jamMulai);
+      const otherEnd = timeToMinutes(other.jamSelesai);
+      const thisStart = timeToMinutes(j.jamMulai);
+      const thisEnd = timeToMinutes(j.jamSelesai);
+      return thisStart < otherEnd && thisEnd > otherStart;
+    });
+    
+    if (hasConflict) {
+      item.classList.add("conflict");
+    }
+    
+    item.style.padding = "8px";
+    item.style.borderRadius = "6px";
+    item.style.display = "flex";
+    item.style.flexDirection = "column";
+    item.style.gap = "6px";
+    item.style.fontSize = "12px";
 
     const title = document.createElement("div");
     title.style.fontWeight = "700";
+    title.style.fontSize = "13px";
     title.textContent = j.matkul || j.mata_kuliah || "";
 
-    const controls = document.createElement("div");
-    controls.style.display = "flex";
-    controls.style.gap = "6px";
-    controls.style.alignItems = "center";
+    const timeInfo = document.createElement("div");
+    timeInfo.style.fontSize = "11px";
+    timeInfo.style.opacity = "0.9";
+    timeInfo.textContent = `${j.jamMulai} - ${j.jamSelesai}`;
 
-    const label = document.createElement("label");
-    label.style.display = "flex";
-    label.style.alignItems = "center";
-    label.style.gap = "6px";
-    label.style.fontSize = "12px";
-    label.style.color = "#dbefff";
+    // Controls container (better layout)
+    const controlsContainer = document.createElement("div");
+    controlsContainer.style.display = "flex";
+    controlsContainer.style.flexDirection = "column";
+    controlsContainer.style.gap = "6px";
+    controlsContainer.style.marginTop = "4px";
 
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.dataset.idx = index;
-    cb.className = "reminder-toggle";
-    cb.style.width = "14px";
-    cb.style.height = "14px";
-    if (j.reminderEnabled) cb.checked = true;
-    cb.addEventListener("change", () => {
-      jadwal[index].reminderEnabled = cb.checked;
+    // Reminder toggle
+    const reminderLabel = document.createElement("label");
+    reminderLabel.style.display = "flex";
+    reminderLabel.style.alignItems = "center";
+    reminderLabel.style.gap = "6px";
+    reminderLabel.style.fontSize = "11px";
+    reminderLabel.style.cursor = "pointer";
+    reminderLabel.style.userSelect = "none";
+
+    const reminderCb = document.createElement("input");
+    reminderCb.type = "checkbox";
+    reminderCb.style.width = "16px";
+    reminderCb.style.height = "16px";
+    reminderCb.style.cursor = "pointer";
+    reminderCb.style.accentColor = "#60a5fa";
+    reminderCb.style.borderRadius = "3px";
+    reminderCb.style.transition = "all 0.15s ease";
+    if (j.reminderEnabled) reminderCb.checked = true;
+    reminderCb.addEventListener("change", () => {
+      jadwal[index].reminderEnabled = reminderCb.checked;
       saveJadwal();
       try {
         window.dispatchEvent(new Event("storage"));
       } catch (e) {}
       if (typeof toast === "function")
-        toast("Pengaturan reminder disimpan", "success");
+        toast(t("reminderSaved"), "success");
+    });
+    reminderCb.addEventListener("mouseover", () => {
+      reminderCb.style.boxShadow = "0 0 6px rgba(96,165,250,0.3)";
+    });
+    reminderCb.addEventListener("mouseout", () => {
+      reminderCb.style.boxShadow = "none";
     });
 
-    const cbText = document.createElement("span");
-    cbText.innerText = "Reminder";
-    cbText.style.fontSize = "12px";
+    const reminderText = document.createElement("span");
+    reminderText.textContent = t("reminder");
+    reminderText.style.color = "#c7d2e8";
+    reminderLabel.appendChild(reminderCb);
+    reminderLabel.appendChild(reminderText);
 
-    label.appendChild(cb);
-    label.appendChild(cbText);
-
-    const btns = document.createElement("div");
-    btns.style.display = "flex";
-    btns.style.gap = "6px";
+    // Edit and Delete buttons
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.gap = "6px";
+    buttonContainer.style.justifyContent = "flex-start";
 
     const editBtn = document.createElement("button");
-    const editSpan = document.createElement("span");
-    editSpan.className = "material-symbols-outlined";
-    editSpan.style.fontSize = "16px";
-    editSpan.innerText = "edit";
-    editBtn.appendChild(editSpan);
+    editBtn.style.padding = "4px 8px";
+    editBtn.style.fontSize = "11px";
+    editBtn.style.border = "none";
+    editBtn.style.borderRadius = "4px";
+    editBtn.style.background = "rgba(0,0,0,0.2)";
+    editBtn.style.color = "#000000";
+    editBtn.style.cursor = "pointer";
+    editBtn.innerHTML = "✎";
     editBtn.addEventListener("click", () => editJadwal(index));
+    editBtn.addEventListener("mouseover", () => editBtn.style.background = "rgba(0,0,0,0.4)");
+    editBtn.addEventListener("mouseout", () => editBtn.style.background = "rgba(0,0,0,0.2)");
+
     const delBtn = document.createElement("button");
-    const delSpan = document.createElement("span");
-    delSpan.className = "material-symbols-outlined";
-    delSpan.style.fontSize = "16px";
-    delSpan.innerText = "delete";
-    delBtn.appendChild(delSpan);
+    delBtn.style.padding = "4px 8px";
+    delBtn.style.fontSize = "11px";
+    delBtn.style.border = "none";
+    delBtn.style.borderRadius = "4px";
+    delBtn.style.background = "rgba(239,68,68,0.2)";
+    delBtn.style.color = "#ef4444";
+    delBtn.style.cursor = "pointer";
+    delBtn.innerHTML = "🗑";
     delBtn.addEventListener("click", () => hapusJadwal(index));
+    delBtn.addEventListener("mouseover", () => delBtn.style.background = "rgba(239,68,68,0.4)");
+    delBtn.addEventListener("mouseout", () => delBtn.style.background = "rgba(239,68,68,0.2)");
 
-    btns.appendChild(editBtn);
-    btns.appendChild(delBtn);
+    buttonContainer.appendChild(editBtn);
+    buttonContainer.appendChild(delBtn);
 
-    controls.appendChild(label);
-    controls.appendChild(btns);
+    controlsContainer.appendChild(reminderLabel);
+    controlsContainer.appendChild(buttonContainer);
 
-    header.appendChild(title);
-    header.appendChild(controls);
+    item.appendChild(title);
+    item.appendChild(timeInfo);
+    item.appendChild(controlsContainer);
 
-    const timeDiv = document.createElement("div");
-    timeDiv.style.marginTop = "6px";
-    timeDiv.style.fontSize = "12px";
-    timeDiv.textContent = `${j.jamMulai || ""} - ${j.jamSelesai || ""}`;
-
-    item.appendChild(header);
-    item.appendChild(timeDiv);
-
-    if (slot) slot.appendChild(item);
-    else {
-      const fallback = document.createElement("div");
-      fallback.className = "class " + (j.warna || "blue");
-      fallback.textContent = j.matkul || j.mata_kuliah || "";
-      grid.appendChild(fallback);
-    }
+    slot.appendChild(item);
   });
 }
 
@@ -197,38 +320,75 @@ function closeModal() {
 
 function clearModal() {
   document.getElementById("matkul").value = "";
-  document.getElementById("hari").value = "1";
+  // Set today's date by default
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  document.getElementById("tanggal").value = `${yyyy}-${mm}-${dd}`;
   document.getElementById("jamMulai").value = "08:00";
   document.getElementById("jamSelesai").value = "09:30";
   document.getElementById("warna").value = "blue";
   editIndex = null;
 }
 
+// Check for schedule overlaps (by date and time)
+function checkScheduleConflict(tanggal, jamMulai, jamSelesai, excludeIndex = null) {
+  const jamMulaiMin = timeToMinutes(jamMulai);
+  const jamSelesaiMin = timeToMinutes(jamSelesai);
+  
+  return jadwal.some((j, idx) => {
+    if (excludeIndex !== null && idx === excludeIndex) return false;
+    if (j.tanggal !== tanggal) return false;
+    
+    const jMulaiMin = timeToMinutes(j.jamMulai);
+    const jSelesaiMin = timeToMinutes(j.jamSelesai);
+    
+    // Check if times overlap
+    return jamMulaiMin < jSelesaiMin && jamSelesaiMin > jMulaiMin;
+  });
+}
+
 function tambahJadwal() {
   const matkul = document.getElementById("matkul").value.trim();
-  const hari = document.getElementById("hari").value;
+  const tanggal = document.getElementById("tanggal").value;
   let jamMulai = document.getElementById("jamMulai").value;
   let jamSelesai = document.getElementById("jamSelesai").value;
   jamMulai = normalizeTime(jamMulai);
   jamSelesai = normalizeTime(jamSelesai);
+  
   if (timeToMinutes(jamSelesai) <= timeToMinutes(jamMulai)) {
     if (typeof toast === "function")
       toast(
-        "Waktu selesai harus lebih besar dari waktu mulai (format 24-jam).",
+        t("timeValidationError"),
         "error",
       );
     return;
   }
   const warna = document.getElementById("warna").value;
   if (!matkul) {
-    if (typeof toast === "function") toast("Isi mata kuliah!", "error");
+    if (typeof toast === "function") toast(t("fillSubject"), "error");
     return;
+  }
+
+  // Validate that a date was selected
+  if (!tanggal || tanggal === "") {
+    if (typeof toast === "function") toast(t("fillAllFields"), "error");
+    return;
+  }
+
+  // Check for schedule conflicts
+  const hasConflict = checkScheduleConflict(tanggal, jamMulai, jamSelesai, editIndex);
+  if (hasConflict && editIndex === null) {
+    if (!confirm(t("scheduleConflict"))) {
+      return;
+    }
   }
 
   const item = {
     mata_kuliah: matkul,
     matkul: matkul,
-    hari,
+    tanggal: tanggal,
     jamMulai,
     jamSelesai,
     warna,
@@ -243,17 +403,33 @@ function tambahJadwal() {
 }
 
 function hapusJadwal(index) {
-  if (!confirm("Hapus jadwal ini?")) return;
+  if (!confirm(t("deleteScheduleConfirm"))) return;
   jadwal.splice(index, 1);
   saveJadwal();
   renderGrid();
-  if (typeof toast === "function") toast("Jadwal dihapus", "success");
+  if (typeof toast === "function") toast(t("scheduleDeletedSuccess"), "success");
 }
 
 function editJadwal(index) {
   const j = jadwal[index];
   document.getElementById("matkul").value = j.matkul;
-  document.getElementById("hari").value = j.hari;
+  
+  // Handle both new date-based and old day-based schedules
+  if (j.tanggal) {
+    document.getElementById("tanggal").value = j.tanggal;
+  } else if (j.hari) {
+    // Convert old hari (day of week) to a date (nearest future occurrence)
+    const today = new Date();
+    const dayOfWeek = Number(j.hari);
+    const daysUntilTarget = (dayOfWeek - today.getDay() + 7) % 7 || 7;
+    const futureDate = new Date(today);
+    futureDate.setDate(futureDate.getDate() + daysUntilTarget);
+    const yyyy = futureDate.getFullYear();
+    const mm = String(futureDate.getMonth() + 1).padStart(2, "0");
+    const dd = String(futureDate.getDate()).padStart(2, "0");
+    document.getElementById("tanggal").value = `${yyyy}-${mm}-${dd}`;
+  }
+  
   document.getElementById("jamMulai").value = j.jamMulai || "08:00";
   document.getElementById("jamSelesai").value = j.jamSelesai || "09:30";
   document.getElementById("warna").value = j.warna || "blue";
@@ -285,9 +461,81 @@ function renderCalendar() {
   cal = document.createElement("div");
   cal.id = "calendar";
   cal.style.marginTop = "12px";
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
+
+  // Navigation header
+  const navHeader = document.createElement("div");
+  navHeader.style.display = "flex";
+  navHeader.style.justifyContent = "space-between";
+  navHeader.style.alignItems = "center";
+  navHeader.style.marginBottom = "12px";
+  navHeader.style.padding = "12px";
+  navHeader.style.borderRadius = "8px";
+  navHeader.style.background = "rgba(96,165,250,0.08)";
+  navHeader.style.border = "1px solid rgba(96,165,250,0.15)";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = t("prevMonth");
+  prevBtn.style.padding = "8px 12px";
+  prevBtn.style.borderRadius = "6px";
+  prevBtn.style.border = "1px solid rgba(96,165,250,0.3)";
+  prevBtn.style.background = "transparent";
+  prevBtn.style.color = "#60a5fa";
+  prevBtn.style.cursor = "pointer";
+  prevBtn.style.fontSize = "12px";
+  prevBtn.style.fontWeight = "600";
+  prevBtn.style.transition = "all 0.2s ease";
+  prevBtn.addEventListener("click", () => {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+    renderCalendar();
+  });
+  prevBtn.addEventListener("mouseover", () => {
+    prevBtn.style.background = "rgba(96,165,250,0.15)";
+  });
+  prevBtn.addEventListener("mouseout", () => {
+    prevBtn.style.background = "transparent";
+  });
+
+  const monthYear = document.createElement("div");
+  const monthKeys = [
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december"
+  ];
+  const displayMonth = t(monthKeys[currentCalendarDate.getMonth()]);
+  const displayYear = currentCalendarDate.getFullYear();
+  monthYear.textContent = `${displayMonth} ${displayYear}`;
+  monthYear.style.fontWeight = "700";
+  monthYear.style.fontSize = "14px";
+  monthYear.style.color = "#dbefff";
+
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = t("nextMonth");
+  nextBtn.style.padding = "8px 12px";
+  nextBtn.style.borderRadius = "6px";
+  nextBtn.style.border = "1px solid rgba(96,165,250,0.3)";
+  nextBtn.style.background = "transparent";
+  nextBtn.style.color = "#60a5fa";
+  nextBtn.style.cursor = "pointer";
+  nextBtn.style.fontSize = "12px";
+  nextBtn.style.fontWeight = "600";
+  nextBtn.style.transition = "all 0.2s ease";
+  nextBtn.addEventListener("click", () => {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+    renderCalendar();
+  });
+  nextBtn.addEventListener("mouseover", () => {
+    nextBtn.style.background = "rgba(96,165,250,0.15)";
+  });
+  nextBtn.addEventListener("mouseout", () => {
+    nextBtn.style.background = "transparent";
+  });
+
+  navHeader.appendChild(prevBtn);
+  navHeader.appendChild(monthYear);
+  navHeader.appendChild(nextBtn);
+  cal.appendChild(navHeader);
+
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
   const first = new Date(year, month, 1);
   const last = new Date(year, month + 1, 0);
   const startDay = first.getDay();
@@ -296,56 +544,75 @@ function renderCalendar() {
   table.style.display = "grid";
   table.style.gridTemplateColumns = "repeat(7,1fr)";
   table.style.gap = "6px";
+  const dayHeaders = [t("sun"), t("mon"), t("tue"), t("wed"), t("thu"), t("fri"), t("sat")];
   for (let i = 0; i < 7; i++) {
     const h = document.createElement("div");
     h.style.fontWeight = "700";
     h.style.color = "#9fb0d8";
     h.style.textAlign = "center";
-    h.innerText = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i];
+    h.innerText = dayHeaders[i];
     table.appendChild(h);
   }
   for (let i = 0; i < startDay; i++) {
     const e = document.createElement("div");
     table.appendChild(e);
   }
+  
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const todayDate = today.getDate();
+  
   for (let d = 1; d <= daysInMonth; d++) {
     const cell = document.createElement("div");
     cell.style.minHeight = "70px";
     cell.style.padding = "8px";
     cell.style.borderRadius = "8px";
     cell.style.background = "rgba(255,255,255,0.02)";
+    
+    // Highlight today's date
+    if (isCurrentMonth && d === todayDate) {
+      cell.style.background = "rgba(59,130,246,0.2)";
+      cell.style.border = "2px solid #3b82f6";
+    }
+    
     const dayNum = document.createElement("div");
     dayNum.style.fontWeight = "700";
     dayNum.style.fontSize = "13px";
-    dayNum.style.color = "#cfe6ff";
+    dayNum.style.color = isCurrentMonth && d === todayDate ? "#60a5fa" : "#cfe6ff";
     dayNum.innerText = d;
+    if (isCurrentMonth && d === todayDate) {
+      dayNum.style.fontWeight = "800";
+    }
     cell.appendChild(dayNum);
     const weekday = new Date(year, month, d).getDay();
-    const weekdayName = [
-      "Minggu",
-      "Senin",
-      "Selasa",
-      "Rabu",
-      "Kamis",
-      "Jumat",
-      "Sabtu",
-    ][weekday];
+    
+    // Create date string to match with schedule date
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    
+    // Filter schedules for this specific date
     const matches = jadwal.filter((j) => {
-      if (!j.hari) return false;
-      const h = Number(j.hari);
-      return h === weekday;
+      if (j.tanggal) {
+        // New format: match exact date
+        return j.tanggal === dateStr;
+
+      }
+      return false;
     });
     matches.forEach((m) => {
       const it = document.createElement("div");
       it.style.fontSize = "12px";
       it.style.marginTop = "6px";
+      it.style.padding = "4px";
+      it.style.borderRadius = "4px";
+      it.style.background = "rgba(59,130,246,0.1)";
+      it.style.color = "#60a5fa";
       it.innerText = `${m.matkul} ${m.jamMulai || ""}`;
       cell.appendChild(it);
       const controls = document.createElement("div");
       controls.style.display = "flex";
       controls.style.gap = "6px";
       controls.style.alignItems = "center";
-      controls.style.marginTop = "6px";
+      controls.style.marginTop = "4px";
 
       const idx = jadwal.indexOf(m);
       const label = document.createElement("label");
@@ -412,7 +679,7 @@ function renderCalendar() {
 }
 
 function backDashboard() {
-  window.location.href = "dashboard.html";
+  navigateTo("dashboard.html");
 }
 
 function goDashboard() {
@@ -421,27 +688,88 @@ function goDashboard() {
       const idx = Number(cb.dataset.idx);
       jadwal[idx].reminderEnabled = cb.checked;
       saveJadwal();
-      toast("Pengaturan reminder disimpan", "success");
+      toast(t("reminderSaved"), "success");
       try {
         window.dispatchEvent(new Event("storage"));
       } catch (e) {}
     });
   });
-  window.location.href = "dashboard.html";
+  navigateTo("dashboard.html");
 }
 
 function goJadwal() {
-  window.location.href = "jadwal.html";
+  navigateTo("jadwal.html");
 }
 
 function goRekap() {
-  window.location.href = "rekap.html";
+  navigateTo("rekap.html");
 }
 
 function goAgenda() {
-  window.location.href = "agenda.html";
+  navigateTo("agenda.html");
 }
+
+function goSettings() {
+  navigateTo("settings.html");
+}
+
+setActiveNav();
 renderGrid();
+
+// ============================================
+// REMINDER NOTIFICATIONS
+// ============================================
+
+// Request notification permission on load
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+
+// Check for upcoming schedules and notify
+function checkUpcomingReminders() {
+  const isNotifyScheduleEnabled = localStorage.getItem("notifySchedule") !== "false";
+  if (!isNotifyScheduleEnabled || !("Notification" in window) || Notification.permission !== "granted") {
+    return;
+  }
+
+  const now = new Date();
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+  const currentTime = timeToMinutes(`${String(currentHours).padStart(2, "0")}:${String(currentMinutes).padStart(2, "0")}`);
+  
+  const today = now.getDay();
+  
+  jadwal.forEach((schedule) => {
+    if (!schedule.reminderEnabled) return;
+    
+    const scheduleDay = Number(schedule.hari);
+    if (scheduleDay !== today) return;
+    
+    const scheduleTime = timeToMinutes(schedule.jamMulai);
+    const timeDiff = scheduleTime - currentTime;
+    
+    // Notify 15 minutes before class starts
+    if (timeDiff > 0 && timeDiff <= 15 && !schedule.notified) {
+      new Notification(t("reminder") || "Reminder", {
+        body: `${schedule.matkul || schedule.mata_kuliah} dimulai dalam 15 menit (${schedule.jamMulai})`,
+        icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%233b82f6' width='100' height='100'/><text x='50' y='70' font-size='60' fill='white' text-anchor='middle' font-weight='bold'>!</text></svg>"
+      });
+      schedule.notified = true;
+      saveJadwal();
+    }
+    
+    // Reset notification flag after class starts
+    if (timeDiff < 0) {
+      schedule.notified = false;
+      saveJadwal();
+    }
+  });
+}
+
+// Check reminders every minute
+setInterval(checkUpcomingReminders, 60000);
+// Initial check
+checkUpcomingReminders();
 
 (function setupFloatingNavbar() {
   const navbar = document.querySelector(".navbar");

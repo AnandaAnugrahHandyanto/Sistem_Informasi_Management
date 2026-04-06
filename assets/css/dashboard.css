@@ -12,6 +12,33 @@
   box-sizing: border-box;
 }
 
+/* Page transition animations */
+body {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+body.page-exit {
+  animation: fadeOut 0.4s ease-in-out forwards;
+}
+
 /* BACKGROUND */
 
 body {
@@ -274,15 +301,20 @@ button {
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 360px;
+  width: min(92%, 720px);
+  max-width: calc(100% - 32px);
   height: 62px;
-  background: rgba(8, 16, 28, 0.6);
+  background: rgba(8, 16, 28, 0.9);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: space-around;
   align-items: center;
   border-radius: 14px;
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 9999;
+  pointer-events: auto;
+  transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.28s ease;
 }
 .nav-item {
   font-size: 20px;
@@ -295,10 +327,18 @@ button {
   justify-content: center;
   border-radius: 10px;
   box-sizing: border-box;
-  transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  pointer-events: auto;
+}
+
+.nav-item:hover {
+  transform: scale(1.05);
+}
+
+.nav-item:active {
+  transform: scale(0.95);
 }
 .nav-item.active {
   color: #60a5fa;
@@ -307,6 +347,34 @@ button {
     rgba(96, 165, 250, 0.12),
     rgba(59, 130, 246, 0.08)
   );
+}
+
+/* Language button */
+#langBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(96, 165, 250, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #60a5fa;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10000;
+}
+
+#langBtn:hover {
+  background: rgba(96, 165, 250, 0.25);
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: scale(1.1);
+}
+
+#langBtn:active {
+  transform: scale(0.95);
 }
 
 /* Animations */
@@ -348,4 +416,26 @@ button {
 .navbar.hide {
   transform: translateX(-50%) translateY(120%);
   opacity: 0;
+  pointer-events: none;
+}
+
+/* List item improvements */
+li {
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+
+li:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(4px);
+}
+
+/* Button improvements */
+button:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
 }

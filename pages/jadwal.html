@@ -16,67 +16,69 @@
   </head>
 
   <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
     <div class="app">
       <!-- header -->
       <div class="header">
-        <h2>Jadwal Kuliah</h2>
+        <h2 data-i18n="scheduleTitle">Jadwal Kuliah</h2>
         <button onclick="backDashboard()" class="dashboard-btn">
-          <span
-            class="material-symbols-outlined"
-            style="font-size: 18px; margin-right: 8px; vertical-align: middle"
-            >arrow_left</span
-          >
-          Kembali ke Dashboard
+          <span class="material-symbols-outlined">arrow_left</span>
+          <span data-i18n="backDashboard">Kembali ke Dashboard</span>
         </button>
       </div>
 
       <!-- tab -->
       <div class="tabs">
-        <button class="active">Minggu Ini</button>
-        <button>Kalender</button>
+        <button class="active" data-i18n="thisWeek">Minggu Ini</button>
+        <button data-i18n="calendar">Kalender</button>
       </div>
 
       <!-- grid -->
       <div class="grid" id="grid"></div>
 
-      <button class="add-btn" onclick="openModal()">+ Tambah Jadwal</button>
+      <button class="add-btn" onclick="openModal()"><span data-i18n="addScheduleBtn">+ Tambah Jadwal</span></button>
     </div>
 
     <!-- modal -->
     <div class="modal" id="modal">
       <div class="modal-content">
-        <h3>Tambah Jadwal</h3>
+        <h3 data-i18n="addSchedule">Tambah Jadwal</h3>
 
-        <input type="text" id="matkul" placeholder="Mata Kuliah" />
+        <input type="text" id="matkul" data-i18n-placeholder="subject" placeholder="Masukkan mata kuliah..." />
 
-        <select id="hari">
-          <option value="1">Senin</option>
-          <option value="2">Selasa</option>
-          <option value="3">Rabu</option>
-          <option value="4">Kamis</option>
-          <option value="5">Jumat</option>
-        </select>
+        <div>
+          <label style="font-size: 12px; color: #9fb0d8; display: block; margin-bottom: 8px;" data-i18n="date">Tanggal</label>
+          <input type="date" id="tanggal" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(96,165,250,0.3); background: rgba(30,41,59,0.6); color: #dbefff; box-sizing: border-box; margin-bottom: 12px;" />
+        </div>
 
-        <div style="display: flex; gap: 8px">
-          <input type="time" id="jamMulai" value="08:00" step="60" />
-          <input type="time" id="jamSelesai" value="09:30" step="60" />
+        <div class="time-wrapper">
+          <div>
+            <label style="font-size: 12px; color: #9fb0d8" data-i18n="startTime">Jam Mulai</label>
+            <input type="time" id="jamMulai" value="08:00" step="60" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: #9fb0d8" data-i18n="endTime">Jam Selesai</label>
+            <input type="time" id="jamSelesai" value="09:30" step="60" />
+          </div>
         </div>
 
         <select id="warna">
-          <option value="blue">Biru</option>
-          <option value="green">Hijau</option>
-          <option value="orange">Orange</option>
-          <option value="red">Merah</option>
+          <option value="blue" data-i18n="blue">Biru</option>
+          <option value="green" data-i18n="green">Hijau</option>
+          <option value="orange" data-i18n="orange">Orange</option>
+          <option value="red" data-i18n="red">Merah</option>
         </select>
 
-        <button onclick="tambahJadwal()">Simpan</button>
-        <button onclick="closeModal()" class="cancel">Batal</button>
+        <div class="button-group">
+          <button onclick="tambahJadwal()" data-i18n="save">Simpan</button>
+          <button onclick="closeModal()" class="cancel" data-i18n="cancel">Batal</button>
+        </div>
       </div>
     </div>
 
     <!-- navbar -->
     <div class="navbar">
-      <div class="nav-item active" onclick="goDashboard()">
+      <div class="nav-item" onclick="goDashboard()">
         <i class="bx bx-home"></i>
       </div>
       <div class="nav-item" onclick="goJadwal()">
@@ -88,8 +90,13 @@
       <div class="nav-item" onclick="goAgenda()">
         <i class="bx bx-task"></i>
       </div>
+      <div class="nav-item" onclick="goSettings()">
+        <i class="bx bx-cog"></i>
+      </div>
     </div>
 
+    <script src="../assets/js/language.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/jadwal.js"></script>
   </body>

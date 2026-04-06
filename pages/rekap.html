@@ -9,27 +9,20 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../assets/css/rekap.css" />
-    <style>
-      /* small fallback */
-      .chart-placeholder {
-        height: 220px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #9fb0d8;
-      }
-    </style>
+    <link rel="stylesheet" href="../assets/css/toast.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
   <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
     <div class="container">
       <!-- HEADER -->
       <div class="header">
         <div class="header-top">
           <div class="avatar">R</div>
           <div>
-            <h2>Rekap</h2>
-            <p>Ringkasan aktivitas dan statistik</p>
+            <h2 data-i18n="recapTitle">Rekap</h2>
+            <p data-i18n="recapSubtitle">Ringkasan aktivitas dan statistik</p>
           </div>
         </div>
       </div>
@@ -37,27 +30,37 @@
       <!-- CARDS -->
       <div class="cards">
         <div class="card">
-          <h3>Total Jadwal</h3>
+          <h3 data-i18n="totalSchedule">Total Jadwal</h3>
           <div class="stat-large" id="totalJadwal">0</div>
         </div>
 
         <div class="card">
-          <h3>Total Agenda</h3>
+          <h3 data-i18n="totalAgenda">Total Agenda</h3>
           <div class="stat-large" id="totalAgenda">0</div>
         </div>
 
         <div class="card">
-          <h3>Total Reminder</h3>
+          <h3 data-i18n="totalReminder">Total Reminder</h3>
           <div class="stat-large" id="totalReminder">0</div>
         </div>
       </div>
 
       <!-- CHART -->
       <div class="card">
-        <h3>Grafik Mingguan</h3>
-        <div class="chart-placeholder">
-          (Placeholder grafik — tambahkan Chart.js bila perlu)
-        </div>
+        <h3 data-i18n="weeklyChart">Grafik Mingguan</h3>
+        <canvas id="weeklyChart" height="80"></canvas>
+      </div>
+
+      <!-- AGENDA STATUS CHART -->
+      <div class="card">
+        <h3 data-i18n="agendaStatus">Status Agenda</h3>
+        <canvas id="agendaChart" height="80"></canvas>
+      </div>
+
+      <!-- CLASS FREQUENCY CHART -->
+      <div class="card">
+        <h3 data-i18n="classFrequency">Frekuensi Kelas</h3>
+        <canvas id="classChart" height="80"></canvas>
       </div>
     </div>
 
@@ -69,48 +72,20 @@
       <div class="nav-item" onclick="goJadwal()">
         <i class="bx bx-book"></i>
       </div>
-      <div class="nav-item active" onclick="goRekap()">
+      <div class="nav-item" onclick="goRekap()">
         <i class="bx bx-bar-chart"></i>
       </div>
       <div class="nav-item" onclick="goAgenda()">
         <i class="bx bx-task"></i>
       </div>
+      <div class="nav-item" onclick="goSettings()">
+        <i class="bx bx-cog"></i>
+      </div>
     </div>
 
-    <script>
-      (function () {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) return;
-
-        const semuaJadwal =
-          JSON.parse(localStorage.getItem("jadwalUser")) || {};
-        const jadwalUser = semuaJadwal[user.nama] || [];
-
-        const semuaAgenda =
-          JSON.parse(localStorage.getItem("agendaUser")) || {};
-        const agenda = semuaAgenda[user.nama] || [];
-
-        const reminder = JSON.parse(localStorage.getItem("reminder")) || [];
-
-        document.getElementById("totalJadwal").innerText =
-          jadwalUser.length || 0;
-        document.getElementById("totalAgenda").innerText = agenda.length || 0;
-        document.getElementById("totalReminder").innerText =
-          reminder.length || 0;
-      })();
-
-      function goDashboard() {
-        window.location.href = "dashboard.html";
-      }
-      function goJadwal() {
-        window.location.href = "jadwal.html";
-      }
-      function goRekap() {
-        window.location.href = "rekap.html";
-      }
-      function goAgenda() {
-        window.location.href = "agenda.html";
-      }
-    </script>
+    <script src="../assets/js/language.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/toast.js"></script>
+    <script src="../assets/js/rekap.js"></script>
   </body>
 </html>

@@ -13,6 +13,7 @@
   </head>
 
   <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
     <div class="container">
       <div class="card">
         <!-- Gambar -->
@@ -23,24 +24,24 @@
           />
         </div>
 
-        <h2>Buat Akun</h2>
-        <p>Silakan isi form untuk mendaftar.</p>
+        <h2 data-i18n="register">Buat Akun</h2>
+        <p data-i18n="registerSubtitle">Silakan isi form untuk mendaftar.</p>
 
         <!-- FORM -->
         <form id="registerForm">
           <div class="input-box">
             <i class="bx bx-user"></i>
-            <input type="text" id="nama" placeholder="Nama Lengkap" required />
+            <input type="text" id="nama" placeholder="Nama Lengkap" data-i18n-placeholder="name" required />
           </div>
 
           <div class="input-box">
             <i class="bx bx-id-card"></i>
-            <input type="text" id="nim" placeholder="NIM" required />
+            <input type="text" id="nim" placeholder="NIM" data-i18n-placeholder="studentId" required />
           </div>
 
           <div class="input-box">
             <i class="bx bx-envelope"></i>
-            <input type="email" id="email" placeholder="Email" required />
+            <input type="email" id="email" placeholder="Email" data-i18n-placeholder="email" required />
           </div>
 
           <div class="input-box">
@@ -49,6 +50,7 @@
               type="password"
               id="password"
               placeholder="Password"
+              data-i18n-placeholder="password"
               required
             />
             <span class="toggle-password" onclick="togglePassword()">
@@ -56,17 +58,18 @@
             </span>
           </div>
 
-          <small class="note">Minimal 8 karakter</small>
+          <small class="note" data-i18n="passwordNote">Minimal 8 karakter</small>
 
-          <button type="submit" class="btn">Daftar</button>
+          <button type="submit" class="btn" data-i18n="register">Daftar</button>
         </form>
 
         <p class="login-link">
-          Sudah punya akun? <a href="../index.html">Login</a>
+          <span data-i18n="haveAccount">Sudah punya akun?</span> <a href="../index.html" data-i18n="login">Login</a>
         </p>
       </div>
     </div>
   </body>
+  <script src="../assets/js/language.js"></script>
   <script src="../assets/js/common.js"></script>
   <script src="../assets/js/toast.js"></script>
   <script src="../assets/js/register.js"></script>

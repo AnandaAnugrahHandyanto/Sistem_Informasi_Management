@@ -60,7 +60,7 @@ function tambahAgenda() {
   const input = document.getElementById("inputAgenda");
   const value = input.value;
 
-  if (!value) return alert("Isi dulu!");
+  if (!value) return alert(t("fillAgenda") || "Isi dulu!");
 
   if (editIndex !== null) {
     agenda[editIndex].text = value;
@@ -75,7 +75,7 @@ function tambahAgenda() {
   save();
   input.value = "";
   renderAgenda();
-  toast("Agenda ditambahkan", "success");
+  toast(t("agendaAddedSuccess"), "success");
 }
 
 // TOGGLE CHECK
@@ -105,18 +105,27 @@ function save() {
 }
 // navigasi
 function goDashboard() {
-  window.location.href = "dashboard.html";
+  navigateTo("dashboard.html");
 }
 
 function goJadwal() {
-  window.location.href = "jadwal.html";
+  navigateTo("jadwal.html");
 }
 
 function goRekap() {
-  window.location.href = "rekap.html";
+  navigateTo("rekap.html");
+}
+
+function goAgenda() {
+  navigateTo("agenda.html");
+}
+
+function goSettings() {
+  navigateTo("settings.html");
 }
 
 // init
+setActiveNav();
 renderAgenda();
 
 // Floating navbar: hide on scroll down, show on scroll up

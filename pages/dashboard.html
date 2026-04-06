@@ -16,6 +16,7 @@
   </head>
 
   <body>
+    <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')">EN</button>
     <div class="container">
       <!-- HEADER -->
       <div class="header">
@@ -29,15 +30,15 @@
         <div class="stats">
           <div class="stat">
             <div class="stat-value" id="todayCount">0</div>
-            <div class="stat-label">Jadwal hari ini</div>
+            <div class="stat-label" data-i18n="scheduleToday">Jadwal hari ini</div>
           </div>
           <div class="stat">
             <div class="stat-value" id="agendaCount">0</div>
-            <div class="stat-label">Agenda</div>
+            <div class="stat-label" data-i18n="agenda">Agenda</div>
           </div>
           <div class="stat">
             <div class="stat-value" id="reminderCount">0</div>
-            <div class="stat-label">Reminder</div>
+            <div class="stat-label" data-i18n="reminder">Reminder</div>
           </div>
         </div>
       </div>
@@ -45,17 +46,17 @@
       <!-- CARD -->
       <div class="cards">
         <div class="card">
-          <h3>Jadwal Hari Ini</h3>
+          <h3 data-i18n="todaySchedule">Jadwal Hari Ini</h3>
           <div id="jadwalList"></div>
         </div>
 
         <div class="card">
-          <h3>Agenda</h3>
+          <h3 data-i18n="agenda">Agenda</h3>
           <ul id="agendaList"></ul>
         </div>
 
         <div class="card">
-          <h3>Reminder</h3>
+          <h3 data-i18n="reminder">Reminder</h3>
           <ul id="reminderList"></ul>
         </div>
       </div>
@@ -75,8 +76,13 @@
       <div class="nav-item" onclick="goAgenda()">
         <i class="bx bx-task"></i>
       </div>
+      <div class="nav-item" onclick="goSettings()">
+        <i class="bx bx-cog"></i>
+      </div>
     </div>
 
+    <script src="../assets/js/language.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/dashboard.js"></script>
   </body>

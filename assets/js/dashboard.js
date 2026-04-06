@@ -4,7 +4,7 @@
 const isLogin = localStorage.getItem("isLogin");
 
 if (!isLogin) {
-  if (typeof toast === "function") toast("Harus login dulu!", "error");
+  if (typeof toast === "function") toast(t("mustLoginFirst"), "error");
   window.location.href = "../index.html";
 }
 
@@ -28,7 +28,9 @@ try {
         ? user.nim
         : "Mahasiswa";
   const greetingEl = document.getElementById("greeting");
-  if (greetingEl) greetingEl.innerText = `Halo, ${name}`;
+  if (greetingEl) {
+    greetingEl.innerText = `${t("greeting")}, ${name}`;
+  }
   try {
     const av = document.querySelector(".avatar");
     if (av) av.innerText = String(name).trim().charAt(0).toUpperCase();
@@ -57,23 +59,28 @@ function refreshData() {
   let jadwalUser = semuaJadwal[user.nama] || [];
 
   const hariMap = {
-    Minggu: 0,
-    Senin: 1,
-    Selasa: 2,
-    Rabu: 3,
-    Kamis: 4,
-    Jumat: 5,
-    Sabtu: 6,
+    [t("sunday")]: 0,
+    [t("monday")]: 1,
+    [t("tuesday")]: 2,
+    [t("wednesday")]: 3,
+    [t("thursday")]: 4,
+    [t("friday")]: 5,
+    [t("saturday")]: 6,
   };
 
   const hariSekarang = today.toLocaleDateString("id-ID", { weekday: "long" });
   const hariIndex = hariMap[hariSekarang];
+  
+  // Today's date in YYYY-MM-DD format
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const todayDateStr = `${yyyy}-${mm}-${dd}`;
 
   const jadwalHariIni = jadwalUser.filter((j) => {
-    if (typeof j.hari === "number") return j.hari === hariIndex;
-    if (typeof j.hari === "string") {
-      if (!isNaN(Number(j.hari))) return Number(j.hari) === hariIndex;
-      return hariMap[j.hari] === hariIndex;
+    // Only check new date-specific format
+    if (j.tanggal && j.tanggal === todayDateStr) {
+      return true;
     }
     return false;
   });
@@ -82,10 +89,14 @@ function refreshData() {
   if (jadwalList) {
     jadwalList.innerHTML = "";
     if (!jadwalHariIni || jadwalHariIni.length === 0) {
-      const p = document.createElement("p");
-      p.innerText = "Tidak ada jadwal";
-      p.style.color = "#9fb0d8";
-      jadwalList.appendChild(p);
+      const emptyDiv = document.createElement("div");
+      emptyDiv.className = "empty-state";
+      emptyDiv.innerHTML = `
+        <div class="empty-state-icon">📚</div>
+        <div class="empty-state-text">${t("noScheduleToday")}</div>
+        <div class="empty-state-subtext">${t("enjoyFreeDay")}</div>
+      `;
+      jadwalList.appendChild(emptyDiv);
     } else {
       jadwalHariIni.forEach((j, idx) => {
         const div = document.createElement("div");
@@ -112,10 +123,14 @@ function refreshData() {
   if (agendaList) {
     agendaList.innerHTML = "";
     if (agenda.length === 0) {
-      const p = document.createElement("p");
-      p.innerText = "Tidak ada agenda";
-      p.style.color = "#9fb0d8";
-      agendaList.appendChild(p);
+      const emptyDiv = document.createElement("div");
+      emptyDiv.className = "empty-state";
+      emptyDiv.innerHTML = `
+        <div class="empty-state-icon">✓</div>
+        <div class="empty-state-text">${t("noAgenda")}</div>
+        <div class="empty-state-subtext">${t("allTasksDone")}</div>
+      `;
+      agendaList.appendChild(emptyDiv);
     } else {
       agenda.forEach((a, idx) => {
         const li = document.createElement("li");
@@ -151,10 +166,13 @@ function refreshData() {
   if (reminderList) {
     reminderList.innerHTML = "";
     if (activeReminders.length === 0) {
-      const p = document.createElement("p");
-      p.innerText = "Tidak ada reminder";
-      p.style.color = "#9fb0d8";
-      reminderList.appendChild(p);
+      const emptyDiv = document.createElement("div");
+      emptyDiv.className = "empty-state";
+      emptyDiv.innerHTML = `
+        <div class="empty-state-icon">🔔</div>
+        <div class="empty-state-text">${t("noReminder")}</div>
+      `;
+      reminderList.appendChild(emptyDiv);
     } else {
       activeReminders.forEach((r, idx) => {
         const li = document.createElement("li");
@@ -208,30 +226,36 @@ setInterval(updateClock, 30_000);
 
 // NAV
 function goDashboard() {
-  window.location.href = "dashboard.html";
+  navigateTo("dashboard.html");
 }
 
 function goJadwal() {
-  window.location.href = "jadwal.html";
+  navigateTo("jadwal.html");
 }
 
 function goRekap() {
-  window.location.href = "rekap.html";
+  navigateTo("rekap.html");
 }
 
 function goAgenda() {
-  window.location.href = "agenda.html";
+  navigateTo("agenda.html");
+}
+
+function goSettings() {
+  navigateTo("settings.html");
 }
 
 // LOGOUT
 function logout() {
   localStorage.removeItem("isLogin");
   localStorage.removeItem("user");
-  if (typeof toast === "function") toast("Logout berhasil", "success");
-  window.location.href = "../index.html";
+  if (typeof toast === "function") toast(t("logoutSuccess"), "success");
+  navigateTo("../index.html");
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  setActiveNav();
+  
   const navItems = document.querySelectorAll(".nav-item");
 
   navItems.forEach((item) => {

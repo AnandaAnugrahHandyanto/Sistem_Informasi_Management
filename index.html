@@ -23,14 +23,19 @@
           />
         </div>
 
-        <h2>Selamat Datang!</h2>
-        <p>Silakan login untuk melanjutkan.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h2 data-i18n="welcome">Selamat Datang!</h2>
+            <p data-i18n="loginSubtitle">Silakan login untuk melanjutkan.</p>
+          </div>
+          <button id="langBtn" onclick="switchLanguage(getLang() === 'id' ? 'en' : 'id')" style="padding: 8px 12px; background: #3b82f6; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: 700;">EN</button>
+        </div>
 
         <!-- FORM -->
         <form id="loginForm">
           <div class="input-box">
             <i class="bx bx-id-card"></i>
-            <input type="text" id="nim" placeholder="NIM" required />
+            <input type="text" id="nim" data-i18n-placeholder="nim" placeholder="NIM" required />
           </div>
 
           <div class="input-box">
@@ -38,6 +43,7 @@
             <input
               type="password"
               id="password"
+              data-i18n-placeholder="password"
               placeholder="Password"
               required
             />
@@ -47,18 +53,19 @@
           </div>
 
           <div class="forgot">
-            <a href="#">Lupa Password?</a>
+            <a href="#" data-i18n="forgotPassword">Lupa Password?</a>
           </div>
 
-          <button type="submit" class="btn">Login</button>
+          <button type="submit" class="btn" data-i18n="login">Login</button>
         </form>
 
         <p class="help">
-          Belum punya akun? <a href="pages/register.html">Daftar</a>
+          <span data-i18n="noAccount">Belum punya akun?</span> <a href="pages/register.html" data-i18n="register">Daftar</a>
         </p>
       </div>
     </div>
   </body>
+  <script src="assets/js/language.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/toast.js"></script>
   <script src="assets/js/script.js"></script>
