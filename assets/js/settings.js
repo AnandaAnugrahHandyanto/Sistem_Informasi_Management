@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function toggleDarkMode() {
   const darkModeToggle = document.getElementById("darkModeToggle");
   const isDarkMode = darkModeToggle.checked;
+  vibrate(50);
 
   if (isDarkMode) {
     document.documentElement.classList.add("dark-mode");
@@ -28,15 +29,16 @@ function toggleDarkMode() {
 function loadTheme() {
   const isDarkMode = localStorage.getItem("darkMode") === "true";
   const darkModeToggle = document.getElementById("darkModeToggle");
+  const html = document.documentElement;
 
   if (isDarkMode) {
-    document.documentElement.classList.add("dark-mode");
-    darkModeToggle.checked = true;
+    html.classList.add("dark-mode");
+    if (darkModeToggle) darkModeToggle.checked = true;
   } else {
-    document.documentElement.classList.remove("dark-mode");
-    darkModeToggle.checked = false;
+    html.classList.remove("dark-mode");
+    if (darkModeToggle) darkModeToggle.checked = false;
   }
-  
+
   // Load custom theme
   loadCustomTheme();
 }
@@ -57,15 +59,17 @@ function loadCustomTheme() {
 }
 
 function applyTheme(themeName) {
-  // Remove all theme classes
-  document.body.classList.remove("theme-blue", "theme-purple", "theme-green", "theme-orange");
-  
-  // Apply selected theme (blue is default, so no class needed)
-  if (themeName !== "blue") {
-    document.body.classList.add(`theme-${themeName}`);
+  const html = document.documentElement;
+  // Remove all theme classes from both html and body (legacy compat)
+  ["theme-purple", "theme-green", "theme-orange"].forEach((cls) => {
+    html.classList.remove(cls);
+    document.body.classList.remove(cls);
+  });
+  // Apply selected theme
+  if (themeName && themeName !== "blue") {
+    html.classList.add(`theme-${themeName}`);
   }
-  
-  localStorage.setItem("appTheme", themeName);
+  localStorage.setItem("appTheme", themeName || "blue");
 }
 
 function changeTheme() {
@@ -109,6 +113,7 @@ function loadNotificationPreferences() {
 }
 
 function saveSettings() {
+  vibrate(30);
   const scheduleNotif = document.getElementById("scheduleNotif");
   const agendaNotif = document.getElementById("agendaNotif");
 

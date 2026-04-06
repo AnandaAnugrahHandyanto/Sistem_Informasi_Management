@@ -62,6 +62,7 @@ function tambahAgenda() {
 
   if (!value) return alert(t("fillAgenda") || "Isi dulu!");
 
+  vibrate(50);
   if (editIndex !== null) {
     agenda[editIndex].text = value;
     editIndex = null;
@@ -80,6 +81,7 @@ function tambahAgenda() {
 
 // TOGGLE CHECK
 function toggleDone(i) {
+  vibrate(30);
   agenda[i].done = !agenda[i].done;
   save();
   renderAgenda();

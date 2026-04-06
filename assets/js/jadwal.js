@@ -52,6 +52,9 @@ function migrateOldSchedules() {
 // Run migration on load
 migrateOldSchedules();
 
+// Calendar animation direction: 'next' | 'prev' | 'none'
+let calendarAnimDir = "none";
+
 // Calendar navigation
 let currentCalendarDate = new Date();
 
@@ -242,7 +245,12 @@ function renderGrid() {
     reminderCb.style.transition = "all 0.15s ease";
     if (j.reminderEnabled) reminderCb.checked = true;
     reminderCb.addEventListener("change", () => {
+      vibrate(50);
       jadwal[index].reminderEnabled = reminderCb.checked;
+      // Update label text to reflect ON/OFF state
+      reminderText.textContent = reminderCb.checked
+        ? `🔔 ${t("reminder")}`
+        : `🔕 ${t("reminder")}`;
       saveJadwal();
       try {
         window.dispatchEvent(new Event("storage"));
@@ -258,7 +266,9 @@ function renderGrid() {
     });
 
     const reminderText = document.createElement("span");
-    reminderText.textContent = t("reminder");
+    reminderText.textContent = j.reminderEnabled
+      ? `🔔 ${t("reminder")}`
+      : `🔕 ${t("reminder")}`;
     reminderText.style.color = "#c7d2e8";
     reminderLabel.appendChild(reminderCb);
     reminderLabel.appendChild(reminderText);
@@ -310,12 +320,16 @@ function renderGrid() {
 }
 
 function openModal() {
+  vibrate(30);
   document.getElementById("modal").style.display = "flex";
 }
 
 function closeModal() {
   document.getElementById("modal").style.display = "none";
   clearModal();
+  // Refresh list view if it's visible
+  const listView = document.getElementById("scheduleListView");
+  if (listView) renderScheduleList();
 }
 
 function clearModal() {
@@ -356,8 +370,9 @@ function tambahJadwal() {
   let jamSelesai = document.getElementById("jamSelesai").value;
   jamMulai = normalizeTime(jamMulai);
   jamSelesai = normalizeTime(jamSelesai);
-  
+
   if (timeToMinutes(jamSelesai) <= timeToMinutes(jamMulai)) {
+    vibrate([50, 30, 50]);
     if (typeof toast === "function")
       toast(
         t("timeValidationError"),
@@ -393,6 +408,7 @@ function tambahJadwal() {
     jamSelesai,
     warna,
   };
+  vibrate(50);
   if (editIndex !== null) {
     jadwal[editIndex] = item;
     editIndex = null;
@@ -404,6 +420,7 @@ function tambahJadwal() {
 
 function hapusJadwal(index) {
   if (!confirm(t("deleteScheduleConfirm"))) return;
+  vibrate(50);
   jadwal.splice(index, 1);
   saveJadwal();
   renderGrid();
@@ -441,19 +458,197 @@ document.addEventListener("DOMContentLoaded", function () {
   const tabs = document.querySelectorAll(".tabs button");
   tabs.forEach((b, i) => {
     b.addEventListener("click", () => {
+      vibrate(30);
       tabs.forEach((t) => t.classList.remove("active"));
       b.classList.add("active");
       if (i === 0) {
+        // "Minggu Ini" — show clean list view
         grid.style.display = "grid";
         const cal = document.getElementById("calendar");
         if (cal) cal.remove();
+        const listView = document.getElementById("scheduleListView");
+        if (listView) listView.remove();
+        renderScheduleList();
       } else {
+        // "Kalender" — show calendar with fade-in (no slide on initial tab switch)
         grid.style.display = "none";
-        renderCalendar();
+        const listView = document.getElementById("scheduleListView");
+        if (listView) listView.remove();
+        animateCalendar("none");
       }
     });
   });
+
+  // Render schedule list on initial load
+  renderScheduleList();
 });
+
+// ============================================================
+// SCHEDULE LIST VIEW — clean card list with course, time, day
+// ============================================================
+function renderScheduleList() {
+  // Remove existing list view
+  const existing = document.getElementById("scheduleListView");
+  if (existing) existing.remove();
+
+  const listView = document.createElement("div");
+  listView.id = "scheduleListView";
+  listView.style.marginTop = "16px";
+  listView.style.animation = "fadeInUp 0.35s ease both";
+
+  // Calculate Monday of current week (day 0 = Sunday, so adjust accordingly)
+  const today = new Date();
+  const currentDay = today.getDay();
+  const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
+  const monday = new Date(today);
+  monday.setDate(diff);
+
+  const weekDates = [];
+  const dayLabels = [t("monday"), t("tuesday"), t("wednesday"), t("thursday"), t("friday")];
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    weekDates.push(`${yyyy}-${mm}-${dd}`);
+  }
+
+  let hasAny = false;
+
+  weekDates.forEach((dateStr, idx) => {
+    const daySchedules = jadwal
+      .filter((j) => j.tanggal === dateStr)
+      .sort((a, b) => (a.jamMulai || "").localeCompare(b.jamMulai || ""));
+
+    if (daySchedules.length === 0) return;
+    hasAny = true;
+
+    const section = document.createElement("div");
+    section.style.marginBottom = "14px";
+    section.style.animation = `fadeInUp 0.3s ease ${idx * 60}ms both`;
+
+    const dayHeader = document.createElement("div");
+    dayHeader.style.fontSize = "12px";
+    dayHeader.style.fontWeight = "700";
+    dayHeader.style.color = "var(--primary-light, #60a5fa)";
+    dayHeader.style.textTransform = "uppercase";
+    dayHeader.style.letterSpacing = "0.6px";
+    dayHeader.style.marginBottom = "8px";
+    dayHeader.style.paddingLeft = "4px";
+
+    // Highlight today
+    const dObj = new Date(dateStr + "T00:00:00");
+    const isToday = dObj.toDateString() === new Date().toDateString();
+    dayHeader.textContent = dayLabels[idx] + (isToday ? " 📌" : "");
+    if (isToday) dayHeader.style.color = "var(--primary, #3b82f6)";
+
+    section.appendChild(dayHeader);
+
+    daySchedules.forEach((j, jIdx) => {
+      const card = document.createElement("div");
+      card.style.background = "rgba(255,255,255,0.02)";
+      card.style.border = "1px solid var(--border-subtle, rgba(255,255,255,0.04))";
+      card.style.borderLeft = `3px solid ${
+        j.warna === "green" ? "var(--success, #10b981)" :
+        j.warna === "orange" ? "var(--warning, #f59e0b)" :
+        j.warna === "red" ? "var(--danger, #ef4444)" :
+        "var(--primary, #3b82f6)"
+      }`;
+      card.style.borderRadius = "10px";
+      card.style.padding = "12px 14px";
+      card.style.marginBottom = "8px";
+      card.style.display = "flex";
+      card.style.justifyContent = "space-between";
+      card.style.alignItems = "center";
+      card.style.gap = "12px";
+      card.style.animation = `fadeInUp 0.28s ease ${idx * 60 + jIdx * 40}ms both`;
+      card.style.transition = "transform var(--t-fast, 0.18s) ease, box-shadow var(--t-fast, 0.18s) ease";
+      card.addEventListener("mouseenter", () => {
+        card.style.transform = "translateY(-2px)";
+        card.style.boxShadow = "var(--shadow-card, 0 6px 18px rgba(2,6,23,0.35))";
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "";
+        card.style.boxShadow = "";
+      });
+
+      const info = document.createElement("div");
+      info.style.flex = "1";
+
+      const courseName = document.createElement("div");
+      courseName.style.fontWeight = "700";
+      courseName.style.fontSize = "14px";
+      courseName.style.color = "var(--text-body, #dbefff)";
+      courseName.style.marginBottom = "4px";
+      courseName.textContent = j.matkul || j.mata_kuliah || "Unnamed";
+
+      const timeEl = document.createElement("div");
+      timeEl.style.fontSize = "12px";
+      timeEl.style.color = "var(--text-muted, #9fb0d8)";
+      timeEl.textContent = `${j.jamMulai || ""} – ${j.jamSelesai || ""}`;
+
+      info.appendChild(courseName);
+      info.appendChild(timeEl);
+
+      // Reminder toggle pill
+      const reminderBtn = document.createElement("button");
+      reminderBtn.style.padding = "5px 10px";
+      reminderBtn.style.borderRadius = "20px";
+      reminderBtn.style.border = "1px solid var(--border-accent, rgba(96,165,250,0.2))";
+      reminderBtn.style.background = j.reminderEnabled
+        ? "var(--primary-dim, rgba(59,130,246,0.12))"
+        : "transparent";
+      reminderBtn.style.color = j.reminderEnabled
+        ? "var(--primary-light, #60a5fa)"
+        : "var(--text-faint, #7f9fc5)";
+      reminderBtn.style.fontSize = "12px";
+      reminderBtn.style.fontWeight = "600";
+      reminderBtn.style.cursor = "pointer";
+      reminderBtn.style.transition = "all var(--t-fast, 0.18s) ease";
+      reminderBtn.style.whiteSpace = "nowrap";
+      reminderBtn.textContent = j.reminderEnabled ? "🔔 ON" : "🔕 OFF";
+
+      const realIdx = jadwal.indexOf(j);
+      reminderBtn.addEventListener("click", () => {
+        vibrate(50);
+        if (realIdx >= 0) {
+          jadwal[realIdx].reminderEnabled = !jadwal[realIdx].reminderEnabled;
+          saveJadwal();
+          if (typeof toast === "function") toast(t("reminderSaved"), "success");
+          try { window.dispatchEvent(new Event("storage")); } catch (e) {}
+        }
+        // Re-render list only (grid doesn't display reminder state)
+        renderScheduleList();
+      });
+
+      card.appendChild(info);
+      card.appendChild(reminderBtn);
+      section.appendChild(card);
+    });
+
+    listView.appendChild(section);
+  });
+
+  if (!hasAny) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = `
+      <div class="empty-state-icon">📚</div>
+      <div class="empty-state-text">${t("noScheduleToday")}</div>
+      <div class="empty-state-subtext">${t("enjoyFreeDay")}</div>
+    `;
+    listView.appendChild(empty);
+  }
+
+  document.querySelector(".app").insertBefore(listView, document.querySelector(".add-btn"));
+}
+
+// Set animation direction and re-render calendar
+function animateCalendar(direction) {
+  calendarAnimDir = direction || "none";
+  renderCalendar();
+}
 
 function renderCalendar() {
   let cal = document.getElementById("calendar");
@@ -461,6 +656,17 @@ function renderCalendar() {
   cal = document.createElement("div");
   cal.id = "calendar";
   cal.style.marginTop = "12px";
+
+  // Apply slide animation based on direction
+  if (calendarAnimDir === "next") {
+    cal.style.animation = "slideInFromRight 0.32s ease both";
+  } else if (calendarAnimDir === "prev") {
+    cal.style.animation = "slideInFromLeft 0.32s ease both";
+  } else {
+    cal.style.animation = "fadeIn 0.25s ease both";
+  }
+  // Reset direction after applying
+  calendarAnimDir = "none";
 
   // Navigation header
   const navHeader = document.createElement("div");
@@ -485,8 +691,9 @@ function renderCalendar() {
   prevBtn.style.fontWeight = "600";
   prevBtn.style.transition = "all 0.2s ease";
   prevBtn.addEventListener("click", () => {
+    vibrate(50);
     currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-    renderCalendar();
+    animateCalendar("prev");
   });
   prevBtn.addEventListener("mouseover", () => {
     prevBtn.style.background = "rgba(96,165,250,0.15)";
@@ -519,8 +726,9 @@ function renderCalendar() {
   nextBtn.style.fontWeight = "600";
   nextBtn.style.transition = "all 0.2s ease";
   nextBtn.addEventListener("click", () => {
+    vibrate(50);
     currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-    renderCalendar();
+    animateCalendar("next");
   });
   nextBtn.addEventListener("mouseover", () => {
     nextBtn.style.background = "rgba(96,165,250,0.15)";
@@ -716,60 +924,12 @@ function goSettings() {
 setActiveNav();
 renderGrid();
 
-// ============================================
-// REMINDER NOTIFICATIONS
-// ============================================
+// ============================================================
+// REMINDER — state-only toggle (no browser notification API)
+// ============================================================
+// Reminder state is saved via saveJadwal() whenever the toggle changes.
+// No browser Notification permission is requested or used.
 
-// Request notification permission on load
-if ("Notification" in window && Notification.permission === "default") {
-  Notification.requestPermission();
-}
-
-// Check for upcoming schedules and notify
-function checkUpcomingReminders() {
-  const isNotifyScheduleEnabled = localStorage.getItem("notifySchedule") !== "false";
-  if (!isNotifyScheduleEnabled || !("Notification" in window) || Notification.permission !== "granted") {
-    return;
-  }
-
-  const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
-  const currentTime = timeToMinutes(`${String(currentHours).padStart(2, "0")}:${String(currentMinutes).padStart(2, "0")}`);
-  
-  const today = now.getDay();
-  
-  jadwal.forEach((schedule) => {
-    if (!schedule.reminderEnabled) return;
-    
-    const scheduleDay = Number(schedule.hari);
-    if (scheduleDay !== today) return;
-    
-    const scheduleTime = timeToMinutes(schedule.jamMulai);
-    const timeDiff = scheduleTime - currentTime;
-    
-    // Notify 15 minutes before class starts
-    if (timeDiff > 0 && timeDiff <= 15 && !schedule.notified) {
-      new Notification(t("reminder") || "Reminder", {
-        body: `${schedule.matkul || schedule.mata_kuliah} dimulai dalam 15 menit (${schedule.jamMulai})`,
-        icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%233b82f6' width='100' height='100'/><text x='50' y='70' font-size='60' fill='white' text-anchor='middle' font-weight='bold'>!</text></svg>"
-      });
-      schedule.notified = true;
-      saveJadwal();
-    }
-    
-    // Reset notification flag after class starts
-    if (timeDiff < 0) {
-      schedule.notified = false;
-      saveJadwal();
-    }
-  });
-}
-
-// Check reminders every minute
-setInterval(checkUpcomingReminders, 60000);
-// Initial check
-checkUpcomingReminders();
 
 (function setupFloatingNavbar() {
   const navbar = document.querySelector(".navbar");

@@ -1,0 +1,166 @@
+/* ============================================================
+   CSS Custom Properties — SIM App Theming
+   Apply to html element; dark-mode & theme classes on html
+   ============================================================ */
+
+:root {
+  /* === BRAND / ACCENT === */
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --primary-dim: rgba(59, 130, 246, 0.12);
+  --primary-glow: rgba(59, 130, 246, 0.3);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  /* === BACKGROUNDS === */
+  --bg-from: #0f172a;
+  --bg-to: #0b1220;
+  --bg-container: rgba(255, 255, 255, 0.03);
+  --bg-card: rgba(255, 255, 255, 0.02);
+  --bg-card-alt: rgba(255, 255, 255, 0.04);
+  --bg-input: rgba(30, 41, 59, 0.6);
+  --bg-navbar: rgba(8, 16, 28, 0.9);
+  --bg-modal: rgba(15, 23, 42, 0.97);
+
+  /* === BORDERS === */
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-medium: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(96, 165, 250, 0.2);
+  --border-input: rgba(96, 165, 250, 0.2);
+
+  /* === TEXT === */
+  --text-heading: #e6eefc;
+  --text-body: #dbefff;
+  --text-secondary: #cfe6ff;
+  --text-muted: #9fb0d8;
+  --text-faint: #7f9fc5;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.3);
+  --shadow-card: 0 6px 18px rgba(2, 6, 23, 0.35);
+  --shadow-card-hover: 0 16px 36px rgba(2, 6, 23, 0.45);
+  --shadow-container: 0 10px 30px rgba(2, 6, 23, 0.6);
+  --shadow-modal: 0 20px 60px rgba(2, 6, 23, 0.8);
+  --shadow-btn: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+  /* === BORDER RADIUS === */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+
+  /* === TRANSITIONS === */
+  --t-fast: 0.18s ease;
+  --t-normal: 0.3s ease;
+  --t-slow: 0.4s ease;
+  --t-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   DARK MODE OVERRIDES (html.dark-mode)
+   ============================================================ */
+html.dark-mode {
+  --bg-from: #050a12;
+  --bg-to: #020610;
+  --bg-container: rgba(0, 0, 0, 0.22);
+  --bg-card: rgba(0, 0, 0, 0.3);
+  --bg-card-alt: rgba(0, 0, 0, 0.4);
+  --bg-input: rgba(0, 0, 0, 0.4);
+  --bg-navbar: rgba(2, 5, 12, 0.96);
+  --bg-modal: rgba(5, 10, 18, 0.98);
+  --border-subtle: rgba(255, 255, 255, 0.02);
+  --border-medium: rgba(255, 255, 255, 0.05);
+  --shadow-container: 0 10px 40px rgba(0, 0, 0, 0.8);
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+/* ============================================================
+   THEME COLOR OVERRIDES (html.theme-*)
+   ============================================================ */
+html.theme-purple {
+  --primary: #8b5cf6;
+  --primary-light: #a78bfa;
+  --primary-dark: #6d28d9;
+  --primary-dim: rgba(139, 92, 246, 0.12);
+  --primary-glow: rgba(139, 92, 246, 0.3);
+  --border-accent: rgba(167, 139, 250, 0.2);
+  --border-input: rgba(167, 139, 250, 0.2);
+  --shadow-btn: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+html.theme-green {
+  --primary: #10b981;
+  --primary-light: #34d399;
+  --primary-dark: #047857;
+  --primary-dim: rgba(16, 185, 129, 0.12);
+  --primary-glow: rgba(16, 185, 129, 0.3);
+  --border-accent: rgba(52, 211, 153, 0.2);
+  --border-input: rgba(52, 211, 153, 0.2);
+  --shadow-btn: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+html.theme-orange {
+  --primary: #f97316;
+  --primary-light: #fb923c;
+  --primary-dark: #c2410c;
+  --primary-dim: rgba(249, 115, 22, 0.12);
+  --primary-glow: rgba(249, 115, 22, 0.3);
+  --border-accent: rgba(251, 146, 60, 0.2);
+  --border-input: rgba(251, 146, 60, 0.2);
+  --shadow-btn: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+/* ============================================================
+   GLOBAL ANIMATION KEYFRAMES
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ============================================================
+   GLOBAL UTILITY CLASSES
+   ============================================================ */
+.fade-in {
+  animation: fadeInUp 0.35s var(--t-bounce) both;
+}
+
+/* Button micro-interactions */
+button:active,
+.btn:active,
+.add-btn:active,
+.nav-item:active {
+  transform: scale(0.95) !important;
+}
+
+button:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
