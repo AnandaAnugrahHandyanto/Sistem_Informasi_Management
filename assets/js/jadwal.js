@@ -470,11 +470,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (listView) listView.remove();
         renderScheduleList();
       } else {
-        // "Kalender" — show calendar with animation
+        // "Kalender" — show calendar with fade-in (no slide on initial tab switch)
         grid.style.display = "none";
         const listView = document.getElementById("scheduleListView");
         if (listView) listView.remove();
-        animateCalendar("next");
+        animateCalendar("none");
       }
     });
   });
@@ -496,7 +496,7 @@ function renderScheduleList() {
   listView.style.marginTop = "16px";
   listView.style.animation = "fadeInUp 0.35s ease both";
 
-  // Get current week Mon-Fri dates
+  // Calculate Monday of current week (day 0 = Sunday, so adjust accordingly)
   const today = new Date();
   const currentDay = today.getDay();
   const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
@@ -618,8 +618,8 @@ function renderScheduleList() {
           if (typeof toast === "function") toast(t("reminderSaved"), "success");
           try { window.dispatchEvent(new Event("storage")); } catch (e) {}
         }
+        // Re-render list only (grid doesn't display reminder state)
         renderScheduleList();
-        renderGrid();
       });
 
       card.appendChild(info);

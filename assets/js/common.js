@@ -45,8 +45,8 @@ function applyTheme() {
   const html = document.documentElement;
 
   // Dark mode
-  const isDarkMode = loadFromLocalStorage("darkMode") === "true" ||
-                     loadFromLocalStorage("darkMode") === true;
+  const darkModePref = loadFromLocalStorage("darkMode");
+  const isDarkMode = darkModePref === "true" || darkModePref === true;
   if (isDarkMode) {
     html.classList.add("dark-mode");
   } else {
