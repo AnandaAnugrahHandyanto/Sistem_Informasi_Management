@@ -51,8 +51,8 @@ body {
 }
 
 /* Dark theme */
-body.dark-mode {
-  background: linear-gradient(180deg, #0a0e18 0%, #050a12 60%);
+html.dark-mode body {
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
 }
 
 /* CONTAINER */
@@ -73,14 +73,14 @@ body.dark-mode {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .container {
+html.dark-mode .container {
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.1)
+    var(--bg-card),
+    var(--bg-card-alt)
   );
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  border-color: rgba(255, 255, 255, 0.02);
+  box-shadow: var(--shadow-container);
+  border-color: var(--border-subtle);
 }
 
 /* HEADER */
@@ -124,13 +124,13 @@ body.dark-mode .container {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .card {
+html.dark-mode .card {
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.3),
-    rgba(0, 0, 0, 0.2)
+    var(--bg-card),
+    var(--bg-card-alt)
   );
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-card);
 }
 
 /* SECTION TITLE */
@@ -362,9 +362,9 @@ input:checked + .toggle-slider:before {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .navbar {
-  background: rgba(5, 10, 18, 0.95);
-  border-color: rgba(255, 255, 255, 0.05);
+html.dark-mode .navbar {
+  background: var(--bg-navbar);
+  border-color: var(--border-subtle);
 }
 
 .nav-item {

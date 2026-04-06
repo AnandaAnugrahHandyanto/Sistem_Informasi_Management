@@ -201,3 +201,24 @@ p {
   background: #3b82f6;
   color: white;
 }
+
+/* ============================================================
+   DARK MODE OVERRIDES (html.dark-mode)
+   ============================================================ */
+html.dark-mode body {
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
+}
+html.dark-mode .card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-modal);
+  border-color: var(--border-subtle);
+}
+html.dark-mode .input-box input {
+  background: var(--bg-input);
+  border-color: var(--border-accent);
+}
+
+/* Button transition for micro-interaction */
+.btn {
+  transition: opacity 0.2s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
