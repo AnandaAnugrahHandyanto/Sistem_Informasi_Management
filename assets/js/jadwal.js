@@ -51,6 +51,7 @@ function migrateOldSchedules() {
 
 // Run migration on load
 migrateOldSchedules();
+migrateScheduleIds();
 
 // Calendar animation direction: 'next' | 'prev' | 'none'
 let calendarAnimDir = "none";
@@ -111,6 +112,27 @@ function parseAMPMto24(s) {
 function saveJadwal() {
   semuaJadwal[user.nama] = jadwal;
   localStorage.setItem("jadwalUser", JSON.stringify(semuaJadwal));
+}
+
+// Generate a unique schedule ID using crypto.randomUUID when available
+function generateScheduleId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return "schedule-" + crypto.randomUUID().slice(0, 8);
+  }
+  return "schedule-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// Ensure every schedule in the list has a unique id
+function migrateScheduleIds() {
+  let changed = false;
+  jadwal = jadwal.map((j) => {
+    if (!j.id) {
+      j.id = generateScheduleId();
+      changed = true;
+    }
+    return j;
+  });
+  if (changed) saveJadwal();
 }
 
 function renderGrid() {
@@ -237,6 +259,8 @@ function renderGrid() {
 
     const reminderCb = document.createElement("input");
     reminderCb.type = "checkbox";
+    reminderCb.className = "reminder-toggle";
+    reminderCb.dataset.id = j.id;
     reminderCb.style.width = "16px";
     reminderCb.style.height = "16px";
     reminderCb.style.cursor = "pointer";
@@ -244,19 +268,12 @@ function renderGrid() {
     reminderCb.style.borderRadius = "3px";
     reminderCb.style.transition = "all 0.15s ease";
     if (j.reminderEnabled) reminderCb.checked = true;
-    reminderCb.addEventListener("change", () => {
+    reminderCb.addEventListener("change", (e) => {
       vibrate(50);
-      jadwal[index].reminderEnabled = reminderCb.checked;
-      // Update label text to reflect ON/OFF state
+      handleReminderToggle(e);
       reminderText.textContent = reminderCb.checked
         ? `🔔 ${t("reminder")}`
         : `🔕 ${t("reminder")}`;
-      saveJadwal();
-      try {
-        window.dispatchEvent(new Event("storage"));
-      } catch (e) {}
-      if (typeof toast === "function")
-        toast(t("reminderSaved"), "success");
     });
     reminderCb.addEventListener("mouseover", () => {
       reminderCb.style.boxShadow = "0 0 6px rgba(96,165,250,0.3)";
@@ -400,7 +417,11 @@ function tambahJadwal() {
     }
   }
 
+  const scheduleId = (editIndex !== null && jadwal[editIndex]?.id)
+    ? jadwal[editIndex].id
+    : generateScheduleId();
   const item = {
+    id: scheduleId,
     mata_kuliah: matkul,
     matkul: matkul,
     tanggal: tanggal,
@@ -410,6 +431,7 @@ function tambahJadwal() {
   };
   vibrate(50);
   if (editIndex !== null) {
+    item.reminderEnabled = jadwal[editIndex]?.reminderEnabled || false;
     jadwal[editIndex] = item;
     editIndex = null;
   } else jadwal.push(item);
@@ -481,6 +503,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Render schedule list on initial load
   renderScheduleList();
+  // Apply saved reminder states to all toggles
+  loadReminderStates();
 });
 
 // ============================================================
@@ -593,6 +617,9 @@ function renderScheduleList() {
 
       // Reminder toggle pill
       const reminderBtn = document.createElement("button");
+      reminderBtn.className = "reminder-toggle";
+      reminderBtn.dataset.id = j.id;
+      if (j.reminderEnabled) reminderBtn.dataset.active = "1";
       reminderBtn.style.padding = "5px 10px";
       reminderBtn.style.borderRadius = "20px";
       reminderBtn.style.border = "1px solid var(--border-accent, rgba(96,165,250,0.2))";
@@ -609,17 +636,9 @@ function renderScheduleList() {
       reminderBtn.style.whiteSpace = "nowrap";
       reminderBtn.textContent = j.reminderEnabled ? "🔔 ON" : "🔕 OFF";
 
-      const realIdx = jadwal.indexOf(j);
-      reminderBtn.addEventListener("click", () => {
+      reminderBtn.addEventListener("click", (e) => {
         vibrate(50);
-        if (realIdx >= 0) {
-          jadwal[realIdx].reminderEnabled = !jadwal[realIdx].reminderEnabled;
-          saveJadwal();
-          if (typeof toast === "function") toast(t("reminderSaved"), "success");
-          try { window.dispatchEvent(new Event("storage")); } catch (e) {}
-        }
-        // Re-render list only (grid doesn't display reminder state)
-        renderScheduleList();
+        handleReminderToggle(e);
       });
 
       card.appendChild(info);
@@ -833,18 +852,13 @@ function renderCalendar() {
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.dataset.idx = idx;
+      cb.dataset.id = m.id;
       cb.className = "reminder-toggle";
       cb.style.width = "14px";
       cb.style.height = "14px";
       if (m.reminderEnabled) cb.checked = true;
-      cb.addEventListener("change", () => {
-        if (idx >= 0) {
-          jadwal[idx].reminderEnabled = cb.checked;
-          saveJadwal();
-          try {
-            window.dispatchEvent(new Event("storage"));
-          } catch (e) {}
-        }
+      cb.addEventListener("change", (e) => {
+        handleReminderToggle(e);
       });
 
       const span = document.createElement("span");
@@ -891,17 +905,6 @@ function backDashboard() {
 }
 
 function goDashboard() {
-  document.querySelectorAll(".reminder-toggle").forEach((cb) => {
-    cb.addEventListener("change", (ev) => {
-      const idx = Number(cb.dataset.idx);
-      jadwal[idx].reminderEnabled = cb.checked;
-      saveJadwal();
-      toast(t("reminderSaved"), "success");
-      try {
-        window.dispatchEvent(new Event("storage"));
-      } catch (e) {}
-    });
-  });
   navigateTo("dashboard.html");
 }
 
@@ -925,10 +928,61 @@ setActiveNav();
 renderGrid();
 
 // ============================================================
-// REMINDER — state-only toggle (no browser notification API)
+// REMINDER — synchronized toggle system (no notifications)
 // ============================================================
-// Reminder state is saved via saveJadwal() whenever the toggle changes.
+// Reminder state is saved via both saveJadwal() and reminder_<id> localStorage keys.
 // No browser Notification permission is requested or used.
+// No toast/alert/snackbar is shown when toggling reminders.
+
+function saveReminderState(id, state) {
+  localStorage.setItem("reminder_" + id, state);
+  const idx = jadwal.findIndex((j) => j.id === id);
+  if (idx >= 0) {
+    jadwal[idx].reminderEnabled = state;
+    saveJadwal();
+  }
+}
+
+function syncReminderState(id, state) {
+  document.querySelectorAll(`[data-id="${id}"]`).forEach((el) => {
+    if (el.type === "checkbox") {
+      el.checked = state;
+    } else {
+      // Pill button style
+      el.textContent = state ? "🔔 ON" : "🔕 OFF";
+      el.style.background = state
+        ? "var(--primary-dim, rgba(59,130,246,0.12))"
+        : "transparent";
+      el.style.color = state
+        ? "var(--primary-light, #60a5fa)"
+        : "var(--text-faint, #7f9fc5)";
+    }
+  });
+}
+
+function handleReminderToggle(event) {
+  const el = event.currentTarget;
+  const id = el.dataset.id;
+  if (!id) return;
+  const isActive = el.type === "checkbox" ? el.checked : el.dataset.active !== "1";
+  if (el.type !== "checkbox") {
+    el.dataset.active = isActive ? "1" : "";
+  }
+  syncReminderState(id, isActive);
+  saveReminderState(id, isActive);
+}
+
+function loadReminderStates() {
+  jadwal.forEach((j) => {
+    if (!j.id) return;
+    const stored = localStorage.getItem("reminder_" + j.id);
+    const state = stored !== null ? stored === "true" : (j.reminderEnabled || false);
+    // Initialise the key so it's always present
+    localStorage.setItem("reminder_" + j.id, state);
+    j.reminderEnabled = state;
+    syncReminderState(j.id, state);
+  });
+}
 
 
 (function setupFloatingNavbar() {
