@@ -781,3 +781,46 @@ body.theme-orange {
     font-size: 36px;
   }
 }
+/* ============================================================
+   DARK MODE OVERRIDES (html.dark-mode)
+   ============================================================ */
+html.dark-mode body {
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
+}
+html.dark-mode .app {
+  background: var(--bg-container);
+  box-shadow: var(--shadow-container);
+  border-color: var(--border-subtle);
+}
+html.dark-mode .card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+html.dark-mode .header {
+  background: linear-gradient(135deg, var(--primary-dim, rgba(59,130,246,0.08)), rgba(96,165,250,0.04));
+}
+html.dark-mode .navbar {
+  background: var(--bg-navbar);
+  border-color: var(--border-medium);
+}
+html.dark-mode .modal {
+  background: rgba(0, 0, 0, 0.75);
+}
+html.dark-mode .modal-content {
+  background: var(--bg-modal, linear-gradient(135deg, rgba(5,10,18,0.98), rgba(2,6,14,0.98)));
+}
+html.dark-mode .slot {
+  background: var(--bg-card);
+}
+
+/* ============================================================
+   CALENDAR ANIMATION KEYFRAMES (from variables.css fallback)
+   ============================================================ */
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}

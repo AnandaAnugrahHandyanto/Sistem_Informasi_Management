@@ -1,39 +1,82 @@
 // Common helpers used across pages
+
+// ============================================================
+// HAPTIC FEEDBACK
+// ============================================================
+function vibrate(ms) {
+  if (ms === undefined) ms = 50;
+  if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+    try { navigator.vibrate(ms); } catch (e) {}
+  }
+}
+
+// ============================================================
+// LOCAL STORAGE HELPERS
+// ============================================================
+function saveToLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+  } catch (e) {}
+}
+
+function loadFromLocalStorage(key, defaultValue) {
+  try {
+    const val = localStorage.getItem(key);
+    if (val === null) return defaultValue !== undefined ? defaultValue : null;
+    try { return JSON.parse(val); } catch (_) { return val; }
+  } catch (e) {
+    return defaultValue !== undefined ? defaultValue : null;
+  }
+}
+
+// ============================================================
+// PASSWORD TOGGLE
+// ============================================================
 function togglePassword() {
   const password = document.getElementById("password");
   if (!password) return;
   password.type = password.type === "password" ? "text" : "password";
 }
 
-// Apply saved theme on page load
+// ============================================================
+// THEME (dark mode + color theme) — applied to html element
+// ============================================================
 function applyTheme() {
-  const isDarkMode = localStorage.getItem("darkMode") === "true";
+  const html = document.documentElement;
+
+  // Dark mode
+  const isDarkMode = loadFromLocalStorage("darkMode") === "true" ||
+                     loadFromLocalStorage("darkMode") === true;
   if (isDarkMode) {
-    document.documentElement.classList.add("dark-mode");
+    html.classList.add("dark-mode");
   } else {
-    document.documentElement.classList.remove("dark-mode");
+    html.classList.remove("dark-mode");
   }
-  
-  // Apply custom theme color
-  const currentTheme = localStorage.getItem("appTheme") || "blue";
-  document.body.classList.remove("theme-blue", "theme-purple", "theme-green", "theme-orange");
+
+  // Color theme
+  const currentTheme = loadFromLocalStorage("appTheme") || "blue";
+  // Clear theme classes from both html and body (legacy compat)
+  ["theme-purple", "theme-green", "theme-orange"].forEach((cls) => {
+    html.classList.remove(cls);
+    document.body.classList.remove(cls);
+  });
   if (currentTheme !== "blue") {
-    document.body.classList.add(`theme-${currentTheme}`);
+    html.classList.add(`theme-${currentTheme}`);
   }
 }
 
-// Call theme on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", function() {
+// Apply theme on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
   applyTheme();
 });
 
-// small helper to navigate relative to pages folder
-function go(path) {
-  window.location.href = path;
-}
+// ============================================================
+// NAVIGATION
+// ============================================================
 
-// Smooth page transition navigation
+// Smooth page transition with haptic feedback
 function navigateTo(path) {
+  vibrate(30);
   document.body.classList.add("page-exit");
   setTimeout(() => {
     window.location.href = path;
@@ -44,9 +87,9 @@ function navigateTo(path) {
 function setActiveNav() {
   const currentPage = window.location.pathname.split("/").pop() || "dashboard.html";
   const navItems = document.querySelectorAll(".nav-item");
-  
+
   navItems.forEach((item) => item.classList.remove("active"));
-  
+
   if (currentPage.includes("dashboard")) {
     navItems[0]?.classList.add("active");
   } else if (currentPage.includes("jadwal")) {
@@ -59,3 +102,4 @@ function setActiveNav() {
     navItems[4]?.classList.add("active");
   }
 }
+

@@ -306,3 +306,26 @@ canvas {
     margin: 0 8px;
   }
 }
+
+/* ============================================================
+   DARK MODE OVERRIDES (html.dark-mode)
+   ============================================================ */
+html.dark-mode body {
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
+}
+html.dark-mode .container {
+  background: var(--bg-container);
+  box-shadow: var(--shadow-container);
+  border-color: var(--border-subtle);
+}
+html.dark-mode .card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+html.dark-mode .header {
+  background: linear-gradient(135deg, var(--primary-dim, rgba(59,130,246,0.08)), rgba(96,165,250,0.04));
+}
+html.dark-mode .navbar {
+  background: var(--bg-navbar);
+  border-color: var(--border-medium);
+}

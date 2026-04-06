@@ -231,3 +231,19 @@ body.theme-orange {
   color: var(--primary-color);
   border-color: rgba(var(--primary-rgb), 0.5);
 }
+
+/* ============================================================
+   DARK MODE OVERRIDES (html.dark-mode)
+   ============================================================ */
+html.dark-mode body {
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
+}
+html.dark-mode .card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-modal);
+  border-color: var(--border-subtle);
+}
+html.dark-mode .input-box input {
+  background: var(--bg-input);
+  border-color: var(--border-accent);
+}
