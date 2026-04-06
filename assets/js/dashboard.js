@@ -157,6 +157,7 @@ function refreshData() {
   const activeReminders = (jadwalUser || [])
     .filter((j) => j && j.reminderEnabled)
     .filter((j) => {
+      if (j.tanggal) return j.tanggal === todayDateStr;
       if (typeof j.hari === "number") return j.hari === hariIndex;
       if (!isNaN(Number(j.hari))) return Number(j.hari) === hariIndex;
       return hariMap[j.hari] === hariIndex;
