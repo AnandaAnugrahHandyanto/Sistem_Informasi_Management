@@ -253,6 +253,8 @@ input:checked + .toggle-slider:before {
 
 .language-select:hover {
   border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(241, 245, 255, 1);
+  filter: brightness(0.97);
 }
 
 .language-select:focus {
