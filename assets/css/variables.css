@@ -8,41 +8,41 @@
   --primary: #3b82f6;
   --primary-light: #60a5fa;
   --primary-dark: #2563eb;
-  --primary-dim: rgba(59, 130, 246, 0.12);
+  --primary-dim: rgba(59, 130, 246, 0.1);
   --primary-glow: rgba(59, 130, 246, 0.3);
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
 
-  /* === BACKGROUNDS === */
-  --bg-from: #0f172a;
-  --bg-to: #0b1220;
-  --bg-container: rgba(255, 255, 255, 0.03);
-  --bg-card: rgba(255, 255, 255, 0.02);
-  --bg-card-alt: rgba(255, 255, 255, 0.04);
-  --bg-input: rgba(30, 41, 59, 0.6);
-  --bg-navbar: rgba(8, 16, 28, 0.9);
-  --bg-modal: rgba(15, 23, 42, 0.97);
+  /* === BACKGROUNDS (light mode) === */
+  --bg-from: #eef2ff;
+  --bg-to: #e8f0fe;
+  --bg-container: rgba(255, 255, 255, 0.85);
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8faff;
+  --bg-input: rgba(241, 245, 255, 0.9);
+  --bg-navbar: rgba(255, 255, 255, 0.95);
+  --bg-modal: #ffffff;
 
-  /* === BORDERS === */
-  --border-subtle: rgba(255, 255, 255, 0.04);
-  --border-medium: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(96, 165, 250, 0.2);
-  --border-input: rgba(96, 165, 250, 0.2);
+  /* === BORDERS (light mode) === */
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-medium: rgba(0, 0, 0, 0.1);
+  --border-accent: rgba(59, 130, 246, 0.3);
+  --border-input: rgba(59, 130, 246, 0.25);
 
-  /* === TEXT === */
-  --text-heading: #e6eefc;
-  --text-body: #dbefff;
-  --text-secondary: #cfe6ff;
-  --text-muted: #9fb0d8;
-  --text-faint: #7f9fc5;
+  /* === TEXT (light mode) === */
+  --text-heading: #1e293b;
+  --text-body: #334155;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
 
-  /* === SHADOWS === */
-  --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.3);
-  --shadow-card: 0 6px 18px rgba(2, 6, 23, 0.35);
-  --shadow-card-hover: 0 16px 36px rgba(2, 6, 23, 0.45);
-  --shadow-container: 0 10px 30px rgba(2, 6, 23, 0.6);
-  --shadow-modal: 0 20px 60px rgba(2, 6, 23, 0.8);
+  /* === SHADOWS (light mode) === */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-container: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.12);
   --shadow-btn: 0 4px 12px rgba(59, 130, 246, 0.3);
 
   /* === BORDER RADIUS === */
@@ -64,20 +64,28 @@
    DARK MODE OVERRIDES (html.dark-mode)
    ============================================================ */
 html.dark-mode {
-  --bg-from: #050a12;
-  --bg-to: #020610;
-  --bg-container: rgba(0, 0, 0, 0.22);
-  --bg-card: rgba(0, 0, 0, 0.3);
-  --bg-card-alt: rgba(0, 0, 0, 0.4);
-  --bg-input: rgba(0, 0, 0, 0.4);
-  --bg-navbar: rgba(2, 5, 12, 0.96);
-  --bg-modal: rgba(5, 10, 18, 0.98);
-  --border-subtle: rgba(255, 255, 255, 0.02);
-  --border-medium: rgba(255, 255, 255, 0.05);
-  --shadow-container: 0 10px 40px rgba(0, 0, 0, 0.8);
-  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.5);
-  --shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.9);
+  --bg-from: #0f172a;
+  --bg-to: #0b1220;
+  --bg-container: rgba(255, 255, 255, 0.03);
+  --bg-card: rgba(255, 255, 255, 0.02);
+  --bg-card-alt: rgba(255, 255, 255, 0.04);
+  --bg-input: rgba(30, 41, 59, 0.6);
+  --bg-navbar: rgba(8, 16, 28, 0.9);
+  --bg-modal: rgba(15, 23, 42, 0.97);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-medium: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(96, 165, 250, 0.2);
+  --border-input: rgba(96, 165, 250, 0.2);
+  --text-heading: #e6eefc;
+  --text-body: #dbefff;
+  --text-secondary: #cfe6ff;
+  --text-muted: #9fb0d8;
+  --text-faint: #7f9fc5;
+  --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.3);
+  --shadow-card: 0 6px 18px rgba(2, 6, 23, 0.35);
+  --shadow-card-hover: 0 16px 36px rgba(2, 6, 23, 0.45);
+  --shadow-container: 0 10px 30px rgba(2, 6, 23, 0.6);
+  --shadow-modal: 0 20px 60px rgba(2, 6, 23, 0.8);
 }
 
 /* ============================================================

@@ -53,7 +53,10 @@
 - Penambahan tampilan kalender sederhana pada halaman jadwal
 
 ### Week 6
-- [ ] *(Akan diisi)*
+- Perubahan default tema dari dark mode ke light mode
+- Perbaikan tombol dark mode agar berfungsi sebagaimana mestinya (toggle antara light dan dark)
+- Penambahan rencana presentasi (Input, Proses, Output) di README.md
+- Penambahan changelog perubahan di changelog.md
 
 ### Week 7
 - [ ] *(Akan diisi)*
@@ -68,12 +71,31 @@
 - Tab kalender pada halaman jadwal belum mendukung navigasi bulan (prev/next)
 - Penyimpanan berbasis localStorage membatasi kapasitas data dan keamanan informasi
 
-## 🔮 Rencana Minggu Depan
+## 🔮 Rencana Presentasi Minggu Depan
 
-- Melengkapi kalender dengan navigasi bulan (prev/next) dan kemampuan menambah event dari kalender
-- Menambahkan fitur pencarian jadwal dan agenda
-- Memperbaiki alur "Lupa Password" agar lebih aman
-- QA sweep: memastikan konsistensi kunci penyimpanan data di semua halaman
+### 📥 Input
+- **Data Pengguna**: NIM dan password yang dimasukkan melalui form login/registrasi
+- **Data Jadwal Kuliah**: Mata kuliah, tanggal, jam mulai, jam selesai yang diisi di halaman Jadwal
+- **Data Agenda**: Judul tugas/kegiatan yang dimasukkan pengguna di halaman Agenda
+- **Data Kehadiran**: Status hadir/tidak hadir yang direkam di halaman Rekap
+- **Preferensi Pengguna**: Pilihan bahasa (ID/EN), tema warna, dan status notifikasi di halaman Pengaturan
+
+### ⚙️ Proses
+- **Autentikasi**: Validasi NIM & password menggunakan data yang tersimpan di localStorage, pembuatan sesi pengguna
+- **Manajemen Jadwal**: CRUD jadwal kuliah dengan validasi jam (jamMulai < jamSelesai), deteksi konflik tumpang tindih, dan rendering grid mingguan
+- **Manajemen Agenda**: CRUD agenda per pengguna, penandaan selesai/belum, dan filter tampilan
+- **Rekap Kehadiran**: Perhitungan statistik kehadiran (total kelas, hadir, absen) dan rendering grafik Chart.js
+- **Notifikasi**: Penjadwalan pengingat otomatis 30 menit sebelum kelas menggunakan setTimeout dan service worker
+- **Tema & Bahasa**: Penerapan CSS class dark-mode / tema warna ke elemen HTML, penggantian teks berdasarkan kamus terjemahan
+
+### 📤 Output
+- **Tampilan Dashboard**: Ringkasan jadwal hari ini, agenda aktif, dan reminder mendatang dengan jam hidup (*live clock*)
+- **Grid Jadwal Mingguan**: Visualisasi jadwal kuliah per hari dengan indikator warna dan peringatan konflik
+- **Kalender Interaktif**: Tampilan kalender bulanan dengan navigasi prev/next dan highlight kelas per tanggal
+- **Daftar Agenda**: List tugas/kegiatan dengan status selesai, tombol edit/hapus
+- **Grafik Rekap**: Grafik batang jadwal mingguan, grafik donat status agenda, grafik frekuensi kelas
+- **Notifikasi Browser**: Alert pengingat otomatis 30 menit sebelum kelas dimulai
+- **Antarmuka Multibahasa**: Semua teks UI berganti antara Bahasa Indonesia dan Bahasa Inggris secara real-time
 
 ## 👨‍💻 Tim Pengembang
 
