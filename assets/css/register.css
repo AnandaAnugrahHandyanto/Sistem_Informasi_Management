@@ -7,7 +7,7 @@
 }
 
 body {
-  background: linear-gradient(180deg, #0f172a 0%, #071028 60%);
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 60%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,17 +47,13 @@ body {
 /* Card */
 
 .card {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.01)
-  );
+  background: var(--bg-card);
   padding: 28px;
   border-radius: 18px;
   text-align: center;
-  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  color: #dbefff;
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-body);
 }
 
 /* Image */
@@ -73,7 +69,7 @@ h2 {
   margin-bottom: 5px;
 }
 p {
-  color: #9fb0d8;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 18px;
 }
@@ -89,10 +85,10 @@ p {
   width: 100%;
   padding: 12px 40px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-input);
   outline: none;
-  background: transparent;
-  color: #dbefff;
+  background: var(--bg-input);
+  color: var(--text-body);
 }
 
 .input-box i {
@@ -111,7 +107,7 @@ p {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #9fb0d8;
+  color: var(--text-muted);
 }
 
 /* Note */
@@ -120,7 +116,7 @@ p {
   display: block;
   text-align: left;
   font-size: 12px;
-  color: #9fb0d8;
+  color: var(--text-muted);
   margin-bottom: 10px;
 }
 
@@ -242,8 +238,10 @@ html.dark-mode .card {
   background: var(--bg-card);
   box-shadow: var(--shadow-modal);
   border-color: var(--border-subtle);
+  color: var(--text-body);
 }
 html.dark-mode .input-box input {
   background: var(--bg-input);
   border-color: var(--border-accent);
+  color: var(--text-body);
 }

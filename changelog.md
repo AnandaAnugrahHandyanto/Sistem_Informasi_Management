@@ -1,5 +1,36 @@
 # Changelog
 
+## Light Mode Default & Dark Mode Fix (2026-04-07)
+
+### ✨ Fitur Baru / Perbaikan
+- 🌞 **Light Mode sebagai Default**: Ubah tampilan default aplikasi dari dark mode ke light mode. Semua halaman kini tampil dengan latar belakang terang (`#eef2ff`/`#e8f0fe`), kartu putih bersih, dan teks gelap yang mudah dibaca.
+- 🌙 **Dark Mode Berfungsi Sesuai Harapan**: Tombol dark mode di halaman Pengaturan kini benar-benar mengubah tampilan menjadi gelap (`#0f172a`/`#0b1220`) saat diaktifkan, dan kembali terang saat dinonaktifkan.
+- 🔧 **Perbaikan Bug Dark Mode**: Sebelumnya, menekan tombol dark mode membuat tampilan semakin gelap (karena `:root` sudah gelap, dan `html.dark-mode` menambahkan warna yang lebih gelap lagi). Sekarang logika ini diperbaiki sepenuhnya.
+
+### 📁 File yang Dimodifikasi
+- `assets/css/variables.css` — `:root` diubah ke light mode, `html.dark-mode` diisi dengan nilai dark mode yang benar
+- `assets/css/style.css` — Body background dan card menggunakan CSS variables
+- `assets/css/dashboard.css` — Light mode default untuk semua elemen
+- `assets/css/settings.css` — Light mode default, toggle slider dan select disesuaikan
+- `assets/css/jadwal.css` — Light mode default, modal, slot, dan tab disesuaikan
+- `assets/css/agenda.css` — Light mode default untuk semua elemen
+- `assets/css/rekap.css` — Light mode default untuk semua elemen
+- `assets/css/register.css` — Light mode default untuk semua elemen
+- `README.md` — Ditambahkan rencana presentasi minggu depan (Input, Proses, Output)
+- `changelog.md` — File ini diperbarui
+
+### 🎨 Perubahan Warna CSS Variables
+| Variable | Light Mode (baru) | Dark Mode (html.dark-mode) |
+|----------|-------------------|---------------------------|
+| `--bg-from` | `#eef2ff` | `#0f172a` |
+| `--bg-to` | `#e8f0fe` | `#0b1220` |
+| `--bg-card` | `#ffffff` | `rgba(255,255,255,0.02)` |
+| `--bg-input` | `rgba(241,245,255,0.9)` | `rgba(30,41,59,0.6)` |
+| `--bg-navbar` | `rgba(255,255,255,0.95)` | `rgba(8,16,28,0.9)` |
+| `--text-heading` | `#1e293b` | `#e6eefc` |
+| `--text-body` | `#334155` | `#dbefff` |
+| `--text-muted` | `#64748b` | `#9fb0d8` |
+
 ## UI/UX & Peningkatan Visual (2026-04-06)
 
 ### ✨ Fitur Baru
